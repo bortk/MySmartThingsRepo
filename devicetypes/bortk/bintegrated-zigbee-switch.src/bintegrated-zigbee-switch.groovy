@@ -353,7 +353,7 @@ private getEndpointCount() {
     def manufacturer = device.getDataValue("manufacturer")
     
     if ( model == 'TS011F' && manufacturer == '_TZ3000_o005nuxx') {
-    	count = 4
+        count = 4
     }
 
     log.debug("getEndpointCount[$model] : $count")
