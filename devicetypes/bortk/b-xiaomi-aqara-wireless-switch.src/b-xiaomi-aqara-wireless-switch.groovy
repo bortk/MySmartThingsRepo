@@ -361,6 +361,15 @@ private checkIntervalEvent(text) {
 
 def formatDate(batteryReset) {
     def correctedTimezone = ''
+    if (location.timeZone) {
+        correctedTimezone = location.timeZone
+    }
+    else {
+        correctedTimezone = TimeZone.getTimeZone('GMT')
+        log.error "${device.displayName}: Time Zone not set, so GMT was used. Please set up your location in the SmartThings mobile app."
+        sendEvent(name: 'error', value: '', descriptionText: 'ERROR: Time Zone not set, so GMT was used. Please set up your location in the SmartThings mobile app.')
+    }
+
     def timeString = clockformat ? 'HH:mm:ss' : 'h:mm:ss aa'
     if (batteryReset) {
         return new Date().format('dd MMM yyyy', correctedTimezone)
