@@ -35,7 +35,7 @@
 /* groovylint-disable-next-line CompileStatic */
 metadata {
     /* groovylint-disable-next-line SpaceAfterMethodCallName */
-    definition (name: 'B Xiaomi Aqara Wireless Switch', namespace: 'bortk', author: 'bspranger', minHubCoreVersion: '000.022.0002', ocfDeviceType: 'x.com.st.d.remotecontroller') {
+    definition (name: 'B Xiaomi Aqara Wireless Switch', namespace: 'bortk', author: 'SmartThings', mcdSync: true,, ocfDeviceType: 'x.com.st.d.remotecontroller') {
         capability 'Battery'
         capability 'Sensor'
         capability 'Button'
@@ -178,7 +178,7 @@ private Map parseReadAttrMessage(String description) {
         def nameAndValue = param.split(':')
         map += [(nameAndValue[0].trim()):nameAndValue[1].trim()]
     }
-    debugLog(": map: '$map'")
+    debugLog(": map : '$map'")
     Map resultMap = [:]
     if (descMap.cluster == '0006') {
         // Process model WXKG02LM / WXKG03LM (2016 revision) button messages
