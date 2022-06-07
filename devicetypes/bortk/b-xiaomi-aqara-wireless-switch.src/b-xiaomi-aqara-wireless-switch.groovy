@@ -41,9 +41,11 @@ metadata {
         capability 'Button'
         capability 'Holdable Button'
         capability 'Actuator'
-        capability 'Momentary'
+        // capability 'Momentary'
         capability 'Configuration'
         capability 'Health Check'
+
+        //capability 'Refresh'
 
         attribute 'lastCheckin', 'string'
         attribute 'lastCheckinCoRE', 'string'
@@ -61,18 +63,18 @@ metadata {
         command 'resetBatteryRuntime'
     }
 
-    // tiles {
-    //     standardTile('button', 'device.button', width: 2, height: 2) {
-    //         state 'default', label: '', icon: 'st.unknown.zwave.remote-controller', backgroundColor: '#ffffff'
-    //         state 'button 1 pushed', label: 'pushed #1', icon: 'st.unknown.zwave.remote-controller', backgroundColor: '#00A0DC'
-    //     }
+    tiles {
+        standardTile('button', 'device.button', width: 2, height: 2) {
+            state 'default', label: '', icon: 'st.unknown.zwave.remote-controller', backgroundColor: '#ffffff'
+            state 'button 1 pushed', label: 'pushed #1', icon: 'st.unknown.zwave.remote-controller', backgroundColor: '#00A0DC'
+        }
 
-    //     standardTile('refresh', 'device.refresh', inactiveLabel: false, decoration: 'flat') {
-    //         state 'default', action:'refresh.refresh', icon:'st.secondary.refresh'
-    //     }
-    //     main (['button'])
-    //     details(['button', 'refresh'])
-    // }
+        standardTile('refresh', 'device.refresh', inactiveLabel: false, decoration: 'flat') {
+            state 'default', action:'refresh.refresh', icon:'st.secondary.refresh'
+        }
+        main (['button'])
+        details(['button', 'refresh'])
+    }
 
     simulator {
         status 'Press button': 'on/off: 0'
@@ -332,9 +334,9 @@ def configure() {
             zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage) + bindings
     return cmds
 // Old Aqara code
-    // initialize(true)
-    // checkIntervalEvent('configured')
-    // return
+// initialize(true)
+// checkIntervalEvent('configured')
+// return
 }
 
 // updated() will run twice every time user presses save in preference settings page
