@@ -361,9 +361,8 @@ def initialize(newlyPaired) {
 }
 
 def setNumButtons() {
-    modelText = 'Aqara D1 2-button Light Switch (WXKG07LM)'
     state.numButtons = 2
-    displayInfoLog(": Model is Aqara $modelText.")
+    displayInfoLog(': Model is Aqara Aqara D1 2-button Light Switch (WXKG07LM)')
     displayInfoLog(": Number of buttons set to ${state.numButtons}.")
     sendEvent(name: 'numberOfButtons', value: state.numButtons, displayed: false)
 // device.currentValue('numberOfButtons')?.times {
