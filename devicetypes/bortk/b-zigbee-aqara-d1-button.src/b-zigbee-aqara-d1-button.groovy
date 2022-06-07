@@ -61,10 +61,10 @@ def parse(String description) {
 def parseAttrMessage(description) {
     log.debug "parseAttrMessage description = ${description} "
     def descMap = zigbee.parseDescriptionAsMap(description)
-    def map = [:]
     log.debug "parseAttrMessage descMap = ${descMap} "
 
     def buttonNumber = 0
+    def actionValue = ''
 
     log.debug "parseAttrMessage descMap.cluster = ${descMap.cluster}"
     log.debug "parseAttrMessage descMap.endpoint = ${descMap.endpoint}"
@@ -72,22 +72,31 @@ def parseAttrMessage(description) {
     log.debug "parseAttrMessage descMap.data = ${descMap.data}"
 
     if (descMap.cluster == '0012') {
-        def buttonValue = Integer.parseInt(descMap.endpoint, 16)
-        log.debug "parseAttrMessage buttonValue = ${buttonValue}"
-
-        def actionValue = Integer.parseInt(descMap.value[2..3], 16)
-        log.debug "parseAttrMessage actionValue = ${actionValue}"
-
         if (descMap.endpoint == '01') {
             buttonNumber = 1
         }
         else if (descMap.endpoint == '02') {
             buttonNumber = 2
         }
+
+        switch (descMap.value) {
+            case '0000':
+                actionValue = 'Held'
+                break
+            case '0001':
+                actionValue = 'Pressed'
+                break
+            case '0002':
+                actionValue = 'Double pressed'
+                break
+        }
     }
     log.debug "parseAttrMessage buttonNumber = ${buttonNumber}"
+    log.debug "parseAttrMessage actionValue = ${actionValue}"
 
-    def descriptionText = getButtonName() + " ${buttonNumber} was pushed"
+    def descriptionText = getButtonName() + " ${buttonNumber} was ${actionValue}"
+    log.debug "${descriptionText}"
+
     if ( buttonNumber > 0 ) {
         log.debug "parseAttrMessage sendEventToChild ${buttonNumber}"
         sendEventToChild(buttonNumber, createEvent(name: 'button', value: 'pushed', data: [buttonNumber: buttonNumber], descriptionText: descriptionText, isStateChange: true))
@@ -182,7 +191,7 @@ private addChildButtons(numberOfButtons) {
 
 private getSupportedButtonValues() {
     def values
-    values = ['pushed', 'held']
+    values = ['pushed', 'held', 'single-clicked', 'double-clicked']
     return values
 }
 
