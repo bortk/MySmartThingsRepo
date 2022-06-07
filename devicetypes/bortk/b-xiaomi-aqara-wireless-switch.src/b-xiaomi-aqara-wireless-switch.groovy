@@ -1,8 +1,8 @@
-/* groovylint-disable CatchException, DuplicateNumberLiteral, DuplicateStringLiteral, ImplicitClosureParameter, LineLength, MethodParameterTypeRequired, MethodReturnTypeRequired, NoDef, PublicMethodsBeforeNonPublicMethods, TernaryCouldBeElvis, UnnecessaryGetter, UnusedImport, VariableName, VariableTypeRequired */
 /**
- *  Aqara Wireless Smart Light Switch model WXKG07LM (2020 revision)
+ *  Aqara Wireless Smart Light Switch models WXKG02LM / WXKG03LM (2016 & 2018 revisions)
  *  Device Handler for SmartThings
- *  Version 0.9.1
+ *  Version 0.9.2
+ *
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
@@ -15,9 +15,8 @@
  *
  *  Based on original device handler code by a4refillpad, adapted by bspranger, then rewritten and updated for changes in firmware 25.20 by veeceeoh
  *  Additional contributions to code by alecm, alixjg, bspranger, gn0st1c, foz333, jmagnuson, rinkek, ronvandegraaf, snalee, tmleafs, twonk, veeceeoh, & xtianpaiva
- *
- *  Notes on capabilities of the different models:
- *  Aqara D1 2-button Light Switch (WXKG07LM) - 2020 (lumi.remote.b286acn02):
+ *  
+ *  Aqara D1 2-button Light Switch (WXKG07LM) - 2020
  *
  *  Known issues:
  *  - As of March 2019, the SmartThings Samsung Connect mobile app does NOT support custom device handlers such as this one
@@ -27,186 +26,222 @@
  *  - Xiaomi devices do not respond to refresh requests
  *  - Most ZigBee repeater devices (generally mains-powered ZigBee devices) are NOT compatible with Xiaomi/Aqara devices, causing them to drop off the network.
  *    Only XBee ZigBee modules, the IKEA Tradfri Outlet / Tradfri Bulb, and ST user @iharyadi's custom multi-sensor ZigBee repeater device are confirmed to be compatible.
+ *
  */
 
  import groovy.json.JsonOutput
  import physicalgraph.zigbee.zcl.DataType
 
-/* groovylint-disable-next-line CompileStatic */
-metadata {
-    /* groovylint-disable-next-line SpaceAfterMethodCallName */
-    definition (name: 'B Xiaomi Aqara Wireless Switch', namespace: 'bortk', author: 'SmartThings', mcdSync: true,, ocfDeviceType: 'x.com.st.d.remotecontroller') {
-        capability 'Battery'
-        capability 'Sensor'
-        capability 'Button'
-        capability 'Holdable Button'
-        capability 'Actuator'
-        // capability 'Momentary'
-        capability 'Configuration'
-        capability 'Health Check'
+ metadata {
+    definition (name: "B Xiaomi Aqara Wireless Switch", namespace: "bortk", author: "bspranger", minHubCoreVersion: "000.022.0002", ocfDeviceType: "x.com.st.d.remotecontroller") {
+        capability "Battery"
+        capability "Sensor"
+        capability "Button"
+        capability "Holdable Button"
+        capability "Actuator"
+        capability "Momentary"
+        capability "Configuration"
+        capability "Health Check"
 
-        //capability 'Refresh'
+        attribute "lastCheckin", "string"
+        attribute "lastCheckinCoRE", "string"
+        attribute "lastHeld", "string"
+        attribute "lastHeldCoRE", "string"
+        attribute "lastPressed", "string"
+        attribute "lastPressedCoRE", "string"
+        attribute "lastReleased", "string"
+        attribute "lastReleasedCoRE", "string"
+        attribute "batteryRuntime", "string"
+        attribute "buttonStatus", "enum", ["pushed", "held", "single-clicked", "double-clicked", "shaken", "released"]
+        
+        
+        //fingerprint deviceJoinName: "Aqara D1 2-button Light Switch (WXKG07LM) - 2020", model: "lumi.remote.b286acn02",  inClusters: "0000,0003,0019,FFFF,0012", outClusters: "0000,0004,0003,0005,0019,FFFF,0012", manufacturer: "LUMI", profileId: "0104", endpointId: "01"
 
-        attribute 'lastCheckin', 'string'
-        attribute 'lastCheckinCoRE', 'string'
-        attribute 'lastHeld', 'string'
-        attribute 'lastHeldCoRE', 'string'
-        attribute 'lastPressed', 'string'
-        attribute 'lastPressedCoRE', 'string'
-        attribute 'lastReleased', 'string'
-        attribute 'lastReleasedCoRE', 'string'
-        attribute 'batteryRuntime', 'string'
-        attribute 'buttonStatus', 'enum', ['pushed', 'held', 'single-clicked', 'double-clicked', 'shaken', 'released']
 
-        //fingerprint deviceJoinName: 'Aqara D1 2-button Light Switch (WXKG07LM) - 2020', model: 'lumi.remote.b286acn02',  inClusters: '0000,0003,0019,FFFF,0012', outClusters: '0000,0004,0003,0005,0019,FFFF,0012', manufacturer: 'LUMI', profileId: '0104', endpointId: '01'
-
-        command 'resetBatteryRuntime'
-    }
-
-    tiles {
-        standardTile('button', 'device.button', width: 2, height: 2) {
-            state 'default', label: '', icon: 'st.unknown.zwave.remote-controller', backgroundColor: '#ffffff'
-            state 'button 1 pushed', label: 'pushed #1', icon: 'st.unknown.zwave.remote-controller', backgroundColor: '#00A0DC'
-        }
-
-        standardTile('refresh', 'device.refresh', inactiveLabel: false, decoration: 'flat') {
-            state 'default', action:'refresh.refresh', icon:'st.secondary.refresh'
-        }
-        main (['button'])
-        details(['button', 'refresh'])
+    
+        command "resetBatteryRuntime"
     }
 
     simulator {
-        status 'Press button': 'on/off: 0'
-        status 'Release button': 'on/off: 1'
+        status "Press button": "on/off: 0"
+        status "Release button": "on/off: 1"
+    }
+
+    tiles(scale: 2) {
+        multiAttributeTile(name:"buttonStatus", type: "lighting", width: 6, height: 4, canChangeIcon: false) {
+            tileAttribute ("device.buttonStatus", key: "PRIMARY_CONTROL") {
+                attributeState("default", label:'Pushed', backgroundColor:"#00a0dc", icon:"https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png")
+                attributeState("pushed", label:'Pushed', backgroundColor:"#00a0dc", icon:"https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png")
+                attributeState("held", label:'Held', backgroundColor:"#00a0dc", icon:"https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png")
+                attributeState("double-clicked", label:'Double-clicked', backgroundColor:"#00a0dc", icon:"https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png")
+                attributeState("leftpushed", label:'Left Pushed', backgroundColor:"#00a0dc", icon:"https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png")
+                attributeState("rightpushed", label:'Right Pushed', backgroundColor:"#00a0dc", icon:"https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png")
+                attributeState("bothpushed", label:'Both Pushed', backgroundColor:"#00a0dc", icon:"https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png")
+                attributeState("leftdouble-clicked", label:'Left Dbl-clicked', backgroundColor:"#00a0dc", icon:"https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png")
+                attributeState("rightdouble-clicked", label:'Right Dbl-clicked', backgroundColor:"#00a0dc", icon:"https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png")
+                attributeState("bothdouble-clicked", label:'Both Dbl-clicked', backgroundColor:"#00a0dc", icon:"https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png")
+                attributeState("leftheld", label:'Left Held', backgroundColor:"#00a0dc", icon:"https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png")
+                attributeState("rightheld", label:'Right Held', backgroundColor:"#00a0dc", icon:"https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png")
+                attributeState("bothheld", label:'Both Held', backgroundColor:"#00a0dc", icon:"https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png")
+                attributeState("released", label:'Released', action: "momentary.push", backgroundColor:"#ffffff", icon:"https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonReleased.png")
+            }
+            tileAttribute("device.lastPressed", key: "SECONDARY_CONTROL") {
+                attributeState "lastPressed", label:'Last Pressed: ${currentValue}'
+            }
+        }
+        valueTile("battery", "device.battery", decoration: "flat", inactiveLabel: false, width: 2, height: 2) {
+            state "battery", label:'${currentValue}%', unit:"%", icon:"https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/XiaomiBattery.png",
+            backgroundColors:[
+                [value: 10, color: "#bc2323"],
+                [value: 26, color: "#f1d801"],
+                [value: 51, color: "#44b621"]
+            ]
+        }
+        valueTile("lastCheckin", "device.lastCheckin", decoration: "flat", inactiveLabel: false, width: 4, height: 1) {
+            state "lastCheckin", label:'Last Event:\n${currentValue}'
+        }
+        valueTile("batteryRuntime", "device.batteryRuntime", inactiveLabel: false, decoration: "flat", width: 4, height: 1) {
+            state "batteryRuntime", label:'Battery Changed: ${currentValue}'
+        }
+        main (["buttonStatus"])
+        details(["buttonStatus","battery","lastCheckin","batteryRuntime"])
     }
 
     preferences {
-        input name: 'reloadSettings', type: 'bool', title: 'Reload Settings'
         //Date & Time Config
-        input description: '', type: 'paragraph', element: 'paragraph', title: 'DATE & CLOCK'
-        input name: 'clockformat', type: 'bool', title: 'Use 24 hour clock?'
+        input description: "", type: "paragraph", element: "paragraph", title: "DATE & CLOCK"
+        input name: "dateformat", type: "enum", title: "Set Date Format\nUS (MDY) - UK (DMY) - Other (YMD)", description: "Date Format", options:["US","UK","Other"]
+        input name: "clockformat", type: "bool", title: "Use 24 hour clock?"
         //Battery Reset Config
-        input description: 'If you have installed a new battery, the toggle below will reset the Changed Battery date to help remember when it was changed.', type: 'paragraph', element: 'paragraph', title: 'CHANGED BATTERY DATE RESET'
-        input name: 'battReset', type: 'bool', title: 'Battery Changed?'
+        input description: "If you have installed a new battery, the toggle below will reset the Changed Battery date to help remember when it was changed.", type: "paragraph", element: "paragraph", title: "CHANGED BATTERY DATE RESET"
+        input name: "battReset", type: "bool", title: "Battery Changed?"
         //Advanced Settings
-        input description: "Only change the settings below if you know what you're doing.", type: 'paragraph', element: 'paragraph', title: 'ADVANCED SETTINGS'
+        input description: "Only change the settings below if you know what you're doing.", type: "paragraph", element: "paragraph", title: "ADVANCED SETTINGS"
         //Battery Voltage Range
-        input description: '', type: 'paragraph', element: 'paragraph', title: 'BATTERY VOLTAGE RANGE'
-        input name: 'voltsmax', type: 'decimal', title: 'Max Volts\nA battery is at 100% at __ volts\nRange 2.8 to 3.4', range: '2.8..3.4', defaultValue: 3
-        input name: 'voltsmin', type: 'decimal', title: 'Min Volts\nA battery is at 0% (needs replacing) at __ volts\nRange 2.0 to 2.7', range: '2..2.7', defaultValue: 2.5
+        input description: "", type: "paragraph", element: "paragraph", title: "BATTERY VOLTAGE RANGE"
+        input name: "voltsmax", type: "decimal", title: "Max Volts\nA battery is at 100% at __ volts\nRange 2.8 to 3.4", range: "2.8..3.4", defaultValue: 3
+        input name: "voltsmin", type: "decimal", title: "Min Volts\nA battery is at 0% (needs replacing) at __ volts\nRange 2.0 to 2.7", range: "2..2.7", defaultValue: 2.5
         //Live Logging Message Display Config
-        input description: 'These settings affect the display of messages in the Live Logging tab of the SmartThings IDE.', type: 'paragraph', element: 'paragraph', title: 'LIVE LOGGING'
-        input name: 'infoLogging', type: 'bool', title: 'Display info log messages?', defaultValue: true
-        input name: 'debugLogging', type: 'bool', title: 'Display debug log messages?', defaultValue: true
+        input description: "These settings affect the display of messages in the Live Logging tab of the SmartThings IDE.", type: "paragraph", element: "paragraph", title: "LIVE LOGGING"
+        input name: "infoLogging", type: "bool", title: "Display info log messages?", defaultValue: true
+        input name: "debugLogging", type: "bool", title: "Display debug log messages?"
     }
 }
 
 //adds functionality to press the center tile as a virtualApp Button
 def push() {
     def result = mapButtonEvent(0, 1)
-    debugLog(": Sending event $result")
+    displayDebugLog(": Sending event $result")
     sendEvent(result)
 }
 
 // Parse incoming device messages to generate events
 def parse(description) {
-    debugLog(': parse (description)', description)
+    log.debug "PARSE ${description}"
+    
+    displayDebugLog(": Parsing '$description'")
     def result = [:]
 
     // Any report - button press & Battery - results in a lastCheckin event and update to Last Checkin tile
-    sendEvent(name: 'lastCheckin', value: formatDate(), displayed: false)
-    sendEvent(name: 'lastCheckinCoRE', value: now(), displayed: false)
+    sendEvent(name: "lastCheckin", value: formatDate(), displayed: false)
+    sendEvent(name: "lastCheckinCoRE", value: now(), displayed: false)
 
     // Send message data to appropriate parsing function based on the type of report
     if (description?.startsWith('on/off: ')) {
         // Hub FW prior to 25.x - Models WXKG02LM/WXKG03LM (original revision) - any press generates button 1 pushed event
         state.numButtons = 1
         result = mapButtonEvent(1, 1)
-    } else if (description?.startsWith('read attr')) {
+    } else if (description?.startsWith("read attr")) {
         // Parse button messages of other models, or messages on short-press of reset button
-        result = parseReadAttrMessage(description - 'read attr - ')
-    } else if (description?.startsWith('catchall')) {
-        debugLog(": Manual Parsing catchall '$description'")
-        /* groovylint-disable-next-line ParameterReassignment */
-        description = description - 'catchall: '
-        debugLog(": TRIM: '$description'")
+        result = parseReadAttrMessage(description - "read attr - ")
+    } else if (description?.startsWith("catchall")) {
+        displayDebugLog(": Manual Parsing catchall '$description'")
+        description = description - "catchall: ";
+        displayDebugLog(": TRIM: '$description'")
         result = parseReadAttrMessageNew(description)
-    // Parse battery level from regular hourly announcement messages
-    //result = parseCatchAllMessage(description)
+        // Parse battery level from regular hourly announcement messages
+        //result = parseCatchAllMessage(description)
     }
     if (result != [:]) {
-        debugLog(": Creating event $result")
+        displayDebugLog(": Creating event $result")
         return createEvent(result)
-    }
-    return [:]
+    } else
+        return [:]
 }
 
 private Map parseReadAttrMessageNew(String description) {
-    debugLog(": parseReadAttrMessageNew: '$description'")
-    Map descMap = (description).split(' ').inject([:]) {
+    displayDebugLog(": parseReadAttrMessageNew: '$description'")
+    Map descMap = (description).split(" ").inject([:]) {
         map, param ->
-        def nameAndValue = param.split(':')
+        def nameAndValue = param.split(":")
         map += [(nameAndValue[0].trim()):nameAndValue[1].trim()]
     }
-    debugLog(": map: '$map'")
+    displayDebugLog(": map: '$map'")
     Map resultMap = [:]
-    if (descMap.cluster == '0006') {
+    if (descMap.cluster == "0006") {
         // Process model WXKG02LM / WXKG03LM (2016 revision) button messages
-        resultMap = mapButtonEvent(Integer.parseInt(descMap.endpoint, 16), 1)
-    } else if (descMap.cluster == '0012') {
+        resultMap = mapButtonEvent(Integer.parseInt(descMap.endpoint,16), 1)
+    } else if (descMap.cluster == "0012") {
         // Process model WXKG02LM / WXKG03LM (2018 revision) button messages
-        resultMap = mapButtonEvent(Integer.parseInt(descMap.endpoint, 16), Integer.parseInt(descMap.value[2..3], 16))
-    } else if (descMap.cluster == '0000' && descMap.attrId == '0005')    {
+        resultMap = mapButtonEvent(Integer.parseInt(descMap.endpoint,16), Integer.parseInt(descMap.value[2..3],16))
+    } else if (descMap.cluster == "0000" && descMap.attrId == "0005")    {
         // Process message containing model name and/or battery voltage report
-        def data = ''
-        if (descMap.value.length() > 45) {
-            model = descMap.value.split('01FF')[0]
-            data = descMap.value.split('01FF')[1]
-            if (data[4..7] == '0121') {
-                def BatteryVoltage = (Integer.parseInt((data[10..11] + data[8..9]), 16))
-                resultMap = getBatteryResult(BatteryVoltage)
-            }
-        }
-    }
-    return resultMap
-}
-private Map parseReadAttrMessage(String description) {
-    debugLog(": parseReadAttrMessage: '$description'")
-    Map descMap = (description).split(',').inject([:]) {
-        map, param ->
-        def nameAndValue = param.split(':')
-        map += [(nameAndValue[0].trim()):nameAndValue[1].trim()]
-    }
-    debugLog(": map : '$map'")
-    Map resultMap = [:]
-    if (descMap.cluster == '0006') {
-        // Process model WXKG02LM / WXKG03LM (2016 revision) button messages
-        resultMap = mapButtonEvent(Integer.parseInt(descMap.endpoint, 16), 1)
-    } else if (descMap.cluster == '0012') {
-        // Process model WXKG02LM / WXKG03LM (2018 revision) button messages
-        resultMap = mapButtonEvent(Integer.parseInt(descMap.endpoint, 16), Integer.parseInt(descMap.value[2..3], 16))
-    } else if (descMap.cluster == '0000' && descMap.attrId == '0005')    {
-        // Process message containing model name and/or battery voltage report
-        def data = ''
-        def modelName = ''
+        def data = ""
+        def modelName = ""
         def model = descMap.value
         if (descMap.value.length() > 45) {
-            model = descMap.value.split('01FF')[0]
-            data = descMap.value.split('01FF')[1]
-            if (data[4..7] == '0121') {
-                def BatteryVoltage = (Integer.parseInt((data[10..11] + data[8..9]), 16))
+            model = descMap.value.split("01FF")[0]
+            data = descMap.value.split("01FF")[1]
+            if (data[4..7] == "0121") {
+                def BatteryVoltage = (Integer.parseInt((data[10..11] + data[8..9]),16))
                 resultMap = getBatteryResult(BatteryVoltage)
             }
         }
         // Parsing the model name
-        for (int i = 0; i < model.length(); i += 2) {
-            /* groovylint-disable-next-line UnnecessarySubstring */
-            def str = model.substring(i, i + 2)
-            def NextChar = (char)Integer.parseInt(str, 16)
+        for (int i = 0; i < model.length(); i+=2) {
+            def str = model.substring(i, i+2);
+            def NextChar = (char)Integer.parseInt(str, 16);
             modelName = modelName + NextChar
         }
-        debugLog(' reported ZigBee model ', $modelName)
+        displayDebugLog(" reported ZigBee model: $modelName")
+    }
+    return resultMap
+}
+private Map parseReadAttrMessage(String description) {
+    displayDebugLog(": parseReadAttrMessage: '$description'")
+    Map descMap = (description).split(",").inject([:]) {
+        map, param ->
+        def nameAndValue = param.split(":")
+        map += [(nameAndValue[0].trim()):nameAndValue[1].trim()]
+    }
+    displayDebugLog(": map: '$map'")
+    Map resultMap = [:]
+    if (descMap.cluster == "0006") {
+        // Process model WXKG02LM / WXKG03LM (2016 revision) button messages
+        resultMap = mapButtonEvent(Integer.parseInt(descMap.endpoint,16), 1)
+    } else if (descMap.cluster == "0012") {
+        // Process model WXKG02LM / WXKG03LM (2018 revision) button messages
+        resultMap = mapButtonEvent(Integer.parseInt(descMap.endpoint,16), Integer.parseInt(descMap.value[2..3],16))
+    } else if (descMap.cluster == "0000" && descMap.attrId == "0005")    {
+        // Process message containing model name and/or battery voltage report
+        def data = ""
+        def modelName = ""
+        def model = descMap.value
+        if (descMap.value.length() > 45) {
+            model = descMap.value.split("01FF")[0]
+            data = descMap.value.split("01FF")[1]
+            if (data[4..7] == "0121") {
+                def BatteryVoltage = (Integer.parseInt((data[10..11] + data[8..9]),16))
+                resultMap = getBatteryResult(BatteryVoltage)
+            }
+        }
+        // Parsing the model name
+        for (int i = 0; i < model.length(); i+=2) {
+            def str = model.substring(i, i+2);
+            def NextChar = (char)Integer.parseInt(str, 16);
+            modelName = modelName + NextChar
+        }
+        displayDebugLog(" reported ZigBee model: $modelName")
     }
     return resultMap
 }
@@ -215,14 +250,14 @@ private Map parseReadAttrMessage(String description) {
 private mapButtonEvent(buttonValue, actionValue) {
     // buttonValue (message endpoint) 1 = left, 2 = right, 3 = both (and 0 = virtual app button)
     // actionValue (message value) 0 = hold, 1 = push, 2 = double-click (hold & double-click on 2018 revision only)
-    def whichButtonText = ['Virtual button was', ((state.numButtons < 3) ? 'Button was' : 'Left button was'), 'Right button was', 'Both buttons were']
-    def statusButton = ['', ((state.numButtons < 3) ? '' : 'left'), 'right', 'both']
-    def pressType = ['held', 'pushed', 'double-clicked']
-    def eventType = (actionValue == 0) ? 'held' : 'pushed'
-    def lastPressType = (actionValue == 0) ? 'Held' : 'Pressed'
+    def whichButtonText = ["Virtual button was", ((state.numButtons < 3) ? "Button was" : "Left button was"), "Right button was", "Both buttons were"]
+    def statusButton = ["", ((state.numButtons < 3) ? "" : "left"), "right", "both"]
+    def pressType = ["held", "pushed", "double-clicked"]
+    def eventType = (actionValue == 0) ? "held" : "pushed"
+    def lastPressType = (actionValue == 0) ? "Held" : "Pressed"
     def buttonNum = (buttonValue == 0 ? 1 : buttonValue) + (actionValue == 2 ? 3 : 0)
     def descText = "${whichButtonText[buttonValue]} ${pressType[actionValue]} (Button $buttonNum $eventType)"
-    sendEvent(name: 'buttonStatus', value: "${statusButton[buttonValue]}${pressType[actionValue]}", isStateChange: true, displayed: false)
+    sendEvent(name: "buttonStatus", value: "${statusButton[buttonValue]}${pressType[actionValue]}", isStateChange: true, displayed: false)
     updateLastPressed(lastPressType)
     displayInfoLog(": $descText")
     runIn(1, clearButtonStatus)
@@ -237,37 +272,36 @@ private mapButtonEvent(buttonValue, actionValue) {
 
 // on any type of button pressed update lastHeld(CoRE), lastPressed(CoRE), or lastReleased(CoRE) to current date/time
 def updateLastPressed(pressType) {
-    debugLog(": Setting Last $pressType to current date/time")
+    displayDebugLog(": Setting Last $pressType to current date/time")
     sendEvent(name: "last${pressType}", value: formatDate(), displayed: false)
     sendEvent(name: "last${pressType}CoRE", value: now(), displayed: false)
 }
 
 def clearButtonStatus() {
-    sendEvent(name: 'buttonStatus', value: 'released', isStateChange: true, displayed: false)
+    sendEvent(name: "buttonStatus", value: "released", isStateChange: true, displayed: false)
 }
 
 // Check catchall for battery voltage data to pass to getBatteryResult for conversion to percentage report
-/*
 private Map parseCatchAllMessage(String description) {
-    debugLog(": parseCatchAllMessage: $description ")
+    displayDebugLog(": parseCatchAllMessage: $description ")
     Map resultMap = [:]
     def catchall = zigbee.parse(description)
-    debugLog(": catchall: $catchall ")
+    displayDebugLog(": catchall: $catchall ")
     if (catchall.clusterId == 0x0000) {
         def MsgLength = catchall.data.size()
         // Xiaomi CatchAll does not have identifiers, first UINT16 is Battery
         if ((catchall.data.get(0) == 0x01 || catchall.data.get(0) == 0x02) && (catchall.data.get(1) == 0xFF)) {
-            for (int i = 4; i < (MsgLength - 3); i++) {
+            for (int i = 4; i < (MsgLength-3); i++) {
                 if (catchall.data.get(i) == 0x21) { // check the data ID and data type
                     // next two bytes are the battery voltage
-                    resultMap = getBatteryResult((catchall.data.get(i + 2) << 8) + catchall.data.get(i + 1))
+                    resultMap = getBatteryResult((catchall.data.get(i+2)<<8) + catchall.data.get(i+1))
                     break
                 }
             }
         }
     }
     return resultMap
-}*/
+}
 
 // Convert raw 4 digit integer voltage value into percentage based on minVolts/maxVolts range
 private Map getBatteryResult(rawValue) {
@@ -283,188 +317,146 @@ private Map getBatteryResult(rawValue) {
     return [
         name: 'battery',
         value: roundedPct,
-        unit: '%',
+        unit: "%",
         isStateChange:true,
         descriptionText : "$device.displayName $descText"
     ]
 }
 
-private debugLog(message) {
-    if (debugLogging) {
+private def displayDebugLog(message) {
+    if (debugLogging)
         log.debug "${device.displayName}${message}"
-    }
-}
-private debugLog(message, param) {
-    if (debugLogging) {
-        log.debug "${device.displayName}${message}: $param"
-    }
 }
 
-private displayInfoLog(message) {
-    // if (infoLogging || state.prefsSetCount < 3) {
-    log.info "${device.displayName}${message}"
-// }
+private def displayInfoLog(message) {
+    if (infoLogging || state.prefsSetCount < 3)
+        log.info "${device.displayName}${message}"
 }
 
 //Reset the date displayed in Battery Changed tile to current date
 def resetBatteryRuntime(paired) {
-    def newlyPaired = paired ? ' for newly paired sensor' : ''
-    sendEvent(name: 'batteryRuntime', value: formatDate(true))
+    def newlyPaired = paired ? " for newly paired sensor" : ""
+    sendEvent(name: "batteryRuntime", value: formatDate(true))
     displayInfoLog(": Setting Battery Changed to current date${newlyPaired}")
 }
 
 // installed() runs just after a sensor is paired using the "Add a Thing" method in the SmartThings mobile app
 def installed() {
     state.prefsSetCount = 0
-    displayInfoLog(': Installing')
-    checkIntervalEvent('')
-    sendEvent(name: 'button', value: 'pushed', isStateChange: true, displayed: false)
-    sendEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
-    initialize()
+    displayInfoLog(": Installing")
+    checkIntervalEvent("")
 }
 
 // configure() runs after installed() when a sensor is paired
 def configure() {
-    displayInfoLog(': Configuring')
-
-    def bindings = getModelBindings()
-    def cmds = zigbee.onOffConfig() +
-            zigbee.configureReporting(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage, DataType.UINT8, 30, 21600, 0x01) +
-            zigbee.enrollResponse() +
-            zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage) + bindings
-    return cmds
-// Old Aqara code
-// initialize(true)
-// checkIntervalEvent('configured')
-// return
+    displayInfoLog(": Configuring")
+    initialize(true)
+    checkIntervalEvent("configured")
+    return
 }
 
 // updated() will run twice every time user presses save in preference settings page
 def updated() {
-    displayInfoLog(': Updating preference settings')
-    /* groovylint-disable-next-line CouldBeElvis */
-    if (!state.prefsSetCount) {
+    displayInfoLog(": Updating preference settings")
+    if (!state.prefsSetCount)
         state.prefsSetCount = 1
-    }
-    else if (state.prefsSetCount < 3) {
+    else if (state.prefsSetCount < 3)
         state.prefsSetCount = state.prefsSetCount + 1
-    }
     initialize(false)
-    if (battReset) {
+    if (battReset){
         resetBatteryRuntime()
-        device.updateSetting('battReset', false)
+        device.updateSetting("battReset", false)
     }
-    checkIntervalEvent('preferences updated')
-    displayInfoLog(': Info message logging enabled')
-    debugLog(': Debug message logging enabled')
+    checkIntervalEvent("preferences updated")
+    displayInfoLog(": Info message logging enabled")
+    displayDebugLog(": Debug message logging enabled")
 }
 
 def initialize(newlyPaired) {
-    debugLog('initialize')
-    sendEvent(name: 'DeviceWatch-Enroll', value: JsonOutput.toJson([protocol: 'zigbee', scheme:'untracked']), displayed: false)
+    sendEvent(name: "DeviceWatch-Enroll", value: JsonOutput.toJson([protocol: "zigbee", scheme:"untracked"]), displayed: false)
     clearButtonStatus()
-    if (!device.currentState('batteryRuntime')?.value) {
+    if (!device.currentState('batteryRuntime')?.value)
         resetBatteryRuntime(newlyPaired)
-    }
     setNumButtons()
-
-    debugLog('state.numButtons: ' + state.numButtons)
-
-    sendEvent(name: 'numberOfButtons', value: state.numButtons, isStateChange: false)
-    sendEvent(name: 'checkInterval', value: 2 * 60 * 60 + 2 * 60, displayed: false, data: [protocol: 'zigbee', hubHardwareId: device.hub.hardwareID])
-
-    if (!childDevices) {
-        addChildButtons(state.numButtons)
-    }
-    if (childDevices) {
-        def event
-        for (def endpoint : 1..device.currentValue('numberOfButtons')) {
-            event = createEvent(name: 'button', value: 'pushed', isStateChange: true)
-            sendEventToChild(endpoint, event)
-        }
-    }
-
-    sendEvent(name:'pushed', value: 0, isStateChange: false, descriptionText: 'Refresh of pushed state')
-    sendEvent(name:'held', value: 0, isStateChange: false, descriptionText: 'Refresh of held state')
-    sendEvent(name:'lastHoldEpoch', value: 0, isStateChange: false, descriptionText: 'Refresh of lastHoldEpoch')
-    sendEvent(name:'doubleTapped', value: 0, isStateChange: false, descriptionText: 'Refresh of double-tapped state')
 }
 
 def setNumButtons() {
-    state.numButtons = 2
-    displayInfoLog(': Model is Aqara Aqara D1 2-button Light Switch (WXKG07LM)')
-    displayInfoLog(": Number of buttons set to ${state.numButtons}.")
-    sendEvent(name: 'numberOfButtons', value: state.numButtons, displayed: false)
-// device.currentValue('numberOfButtons')?.times {
-//             sendEvent(name: 'button', value: 'pushed', data: [buttonNumber: it + 1], displayed: false)
-// }
-}
-
-def sendEventToChild(buttonNumber, event) {
-    String childDni = "${device.deviceNetworkId}:$buttonNumber"
-    def child = childDevices.find { it.deviceNetworkId == childDni }
-    child?.sendEvent(event)
+    if (device.getDataValue("model")) {
+        def modelName = device.getDataValue("model")
+        def modelText = ""
+        if (!state.numButtons || state.numButtons == 7) {
+            if (modelName.startsWith("lumi.sensor_86sw2")) {
+                modelText = "Wireless Smart Light Switch WXKG02LM - dual button (2016 revision)"
+                state.numButtons = 3
+            }
+            else if (modelName.startsWith("lumi.sensor_86sw1")) {
+                modelText = "Wireless Smart Light Switch WXKG03LM - single button (2016 revision)"
+                state.numButtons = 1
+            }
+            else if (modelName.startsWith("lumi.remote.b186acn01")) {
+                modelText = "Wireless Smart Light Switch WXKG03LM - single button (2018 revision)"
+                state.numButtons = 2
+            }
+            else if (modelName.startsWith("lumi.remote.b286acn01")) {
+                modelText = "Wireless Smart Light Switch WXKG02LM - dual button (2018 revision)"
+                state.numButtons = 6
+            }
+            else {
+                state.numButtons = 3
+            }
+            displayInfoLog(": Model is Aqara $modelText.")
+            displayInfoLog(": Number of buttons set to ${state.numButtons}.")
+            sendEvent(name: "numberOfButtons", value: state.numButtons, displayed: false)
+            device.currentValue("numberOfButtons")?.times {
+                sendEvent(name: "button", value: "pushed", data: [buttonNumber: it+1], displayed: false)
+            }
+        }
+    }
+    else {
+        if (!state.numButtons) {
+            displayInfoLog(": Model is unknown, so number of buttons is set to default of 6.")
+            sendEvent(name: "numberOfButtons", value: 6, displayed: false)
+            state.numButtons = 7
+        }
+    }
 }
 
 private checkIntervalEvent(text) {
     // Device wakes up every 1 hours, this interval allows us to miss one wakeup notification before marking offline
-    if (text) {
+    if (text)
         displayInfoLog(": Set health checkInterval when ${text}")
-        sendEvent(name: 'checkInterval', value: 2 * 60 * 60 + 2 * 60, displayed: false, data: [protocol: 'zigbee', hubHardwareId: device.hub.hardwareID])
-    }
+    sendEvent(name: "checkInterval", value: 2 * 60 * 60 + 2 * 60, displayed: false, data: [protocol: "zigbee", hubHardwareId: device.hub.hardwareID])
 }
 
 def formatDate(batteryReset) {
-    def correctedTimezone = ''
-    if (location.timeZone) {
+    def correctedTimezone = ""
+    def timeString = clockformat ? "HH:mm:ss" : "h:mm:ss aa"
+
+    // If user's hub timezone is not set, display error messages in log and events log, and set timezone to GMT to avoid errors
+    if (!(location.timeZone)) {
+        correctedTimezone = TimeZone.getTimeZone("GMT")
+        log.error "${device.displayName}: Time Zone not set, so GMT was used. Please set up your location in the SmartThings mobile app."
+        sendEvent(name: "error", value: "", descriptionText: "ERROR: Time Zone not set, so GMT was used. Please set up your location in the SmartThings mobile app.")
+    }
+    else {
         correctedTimezone = location.timeZone
     }
+    if (dateformat == "US" || dateformat == "" || dateformat == null) {
+        if (batteryReset)
+            return new Date().format("MMM dd yyyy", correctedTimezone)
+        else
+            return new Date().format("EEE MMM dd yyyy ${timeString}", correctedTimezone)
+    }
+    else if (dateformat == "UK") {
+        if (batteryReset)
+            return new Date().format("dd MMM yyyy", correctedTimezone)
+        else
+            return new Date().format("EEE dd MMM yyyy ${timeString}", correctedTimezone)
+    }
     else {
-        correctedTimezone = TimeZone.getTimeZone('GMT')
-        log.error "${device.displayName}: Time Zone not set, so GMT was used. Please set up your location in the SmartThings mobile app."
-        sendEvent(name: 'error', value: '', descriptionText: 'ERROR: Time Zone not set, so GMT was used. Please set up your location in the SmartThings mobile app.')
+        if (batteryReset)
+            return new Date().format("yyyy MMM dd", correctedTimezone)
+        else
+            return new Date().format("EEE yyyy MMM dd ${timeString}", correctedTimezone)
     }
-
-    def timeString = clockformat ? 'HH:mm:ss' : 'h:mm:ss aa'
-    if (batteryReset) {
-        return new Date().format('dd MMM yyyy', correctedTimezone)
-    }
-    /* groovylint-disable-next-line UnnecessaryElseStatement */
-    else {
-        return new Date().format("EEE dd MMM yyyy ${timeString}", correctedTimezone)
-    }
-}
-
-private addChildButtons(numberOfButtons) {
-    for (def endpoint : 1..numberOfButtons) {
-        try {
-            String childDni = "${device.deviceNetworkId}:$endpoint"
-            def componentLabel = getButtonName() + "${endpoint}"
-
-            def child = addChildDevice('smartthings', 'Child Button', childDni, device.getHub().getId(), [
-                    completedSetup: true,
-                    label         : componentLabel,
-                    isComponent   : true,
-                    componentName : "button$endpoint",
-                    componentLabel: "Button $endpoint"
-            ])
-            log.debug 'button: $endpoint  created'
-            log.debug 'child: $child  created'
-            child.sendEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
-        } catch (Exception e) {
-            log.debug "Exception: ${e}"
-        }
-    }
-}
-private getModelBindings() {
-    def bindings = []
-    for (def endpoint : 1..2) {
-        bindings += zigbee.addBinding(zigbee.ONOFF_CLUSTER, ['destEndpoint' : endpoint])
-    }
-    bindings
-}
-
-private getButtonName() {
-    def values = device.displayName.endsWith(' 1') ? "${device.displayName[0..-2]}" : "${device.displayName}"
-    return values
 }
