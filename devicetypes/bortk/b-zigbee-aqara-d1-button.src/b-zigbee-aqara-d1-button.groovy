@@ -23,10 +23,6 @@ metadata {
 
         fingerprint deviceJoinName: 'Aqara D1 2-button Light Switch (WXKG07LM) - 2020', model: 'lumi.remote.b286acn02',  inClusters: '0000,0003,0019,FFFF,0012', outClusters: '0000,0004,0003,0005,0019,FFFF,0012', manufacturer: 'LUMI', profileId: '0104', endpointId: '01'
     }
-//Button 1:
-//read attr - raw: 14B40100120A5500210100, dni: 14B4, endpoint: 01, cluster: 0012, size: 10, attrId: 0055, result: success, encoding: 21, value: 0001
-//Button 2 :
-//read attr - raw: 14B40200120A5500210100, dni: 14B4, endpoint: 02, cluster: 0012, size: 10, attrId: 0055, result: success, encoding: 21, value: 0001
 
     tiles {
         standardTile('button', 'device.button', width: 2, height: 2) {
