@@ -1,4 +1,4 @@
-/* groovylint-disable DuplicateNumberLiteral, DuplicateStringLiteral, LineLength, MethodParameterTypeRequired, MethodReturnTypeRequired, NoDef, PublicMethodsBeforeNonPublicMethods, TernaryCouldBeElvis, UnusedImport, VariableName, VariableTypeRequired */
+/* groovylint-disable CatchException, DuplicateNumberLiteral, DuplicateStringLiteral, LineLength, MethodParameterTypeRequired, MethodReturnTypeRequired, NoDef, PublicMethodsBeforeNonPublicMethods, TernaryCouldBeElvis, UnnecessaryGetter, UnusedImport, VariableName, VariableTypeRequired */
 /**
  *  Aqara Wireless Smart Light Switch model WXKG07LM (2020 revision)
  *  Device Handler for SmartThings
@@ -82,7 +82,7 @@ metadata {
         //Live Logging Message Display Config
         input description: 'These settings affect the display of messages in the Live Logging tab of the SmartThings IDE.', type: 'paragraph', element: 'paragraph', title: 'LIVE LOGGING'
         input name: 'infoLogging', type: 'bool', title: 'Display info log messages?', defaultValue: true
-        input name: 'debugLogging', type: 'bool', title: 'Display debug log messages?'
+        input name: 'debugLogging', type: 'bool', title: 'Display debug log messages?', defaultValue: true
     }
 }
 
@@ -330,26 +330,46 @@ def updated() {
 }
 
 def initialize(newlyPaired) {
+    displayDebugLog('initialize')
     sendEvent(name: 'DeviceWatch-Enroll', value: JsonOutput.toJson([protocol: 'zigbee', scheme:'untracked']), displayed: false)
     clearButtonStatus()
     if (!device.currentState('batteryRuntime')?.value) {
         resetBatteryRuntime(newlyPaired)
     }
     setNumButtons()
+
+    displayDebugLog('state.numButtons: ' + state.numButtons)
+
+    sendEvent(name: 'numberOfButtons', value: state.numButtons, isStateChange: false)
+    sendEvent(name: 'checkInterval', value: 2 * 60 * 60 + 2 * 60, displayed: false, data: [protocol: 'zigbee', hubHardwareId: device.hub.hardwareID])
+
+    if (!childDevices) {
+        addChildButtons(state.numButtons)
+    }
+    if (childDevices) {
+        def event
+        for (def endpoint : 1..device.currentValue('numberOfButtons')) {
+            event = createEvent(name: 'button', value: 'pushed', isStateChange: true)
+            sendEventToChild(endpoint, event)
+        }
+    }
+
+    sendEvent(name:'pushed', value: 0, isStateChange: false, descriptionText: 'Refresh of pushed state')
+    sendEvent(name:'held', value: 0, isStateChange: false, descriptionText: 'Refresh of held state')
+    sendEvent(name:'lastHoldEpoch', value: 0, isStateChange: false, descriptionText: 'Refresh of lastHoldEpoch')
+    sendEvent(name:'doubleTapped', value: 0, isStateChange: false, descriptionText: 'Refresh of double-tapped state')
 }
 
 def setNumButtons() {
-    // if (device.getDataValue('model')) {
-    //     def modelName = device.getDataValue('model')
     modelText = 'Aqara D1 2-button Light Switch (WXKG07LM)'
     state.numButtons = 2
     displayInfoLog(": Model is Aqara $modelText.")
     displayInfoLog(": Number of buttons set to ${state.numButtons}.")
     sendEvent(name: 'numberOfButtons', value: state.numButtons, displayed: false)
-    // device.currentValue('numberOfButtons')?.times {
-    //             sendEvent(name: 'button', value: 'pushed', data: [buttonNumber: it + 1], displayed: false)
-    // }
-    }
+// device.currentValue('numberOfButtons')?.times {
+//             sendEvent(name: 'button', value: 'pushed', data: [buttonNumber: it + 1], displayed: false)
+// }
+}
 
 private checkIntervalEvent(text) {
     // Device wakes up every 1 hours, this interval allows us to miss one wakeup notification before marking offline
@@ -378,4 +398,31 @@ def formatDate(batteryReset) {
     else {
         return new Date().format("EEE dd MMM yyyy ${timeString}", correctedTimezone)
     }
+}
+
+private addChildButtons(numberOfButtons) {
+    for (def endpoint : 1..numberOfButtons) {
+        try {
+            String childDni = "${device.deviceNetworkId}:$endpoint"
+            def componentLabel = getButtonName() + "${endpoint}"
+
+            def child = addChildDevice('smartthings', 'Child Button', childDni, device.getHub().getId(), [
+                    completedSetup: true,
+                    label         : componentLabel,
+                    isComponent   : true,
+                    componentName : "button$endpoint",
+                    componentLabel: "Button $endpoint"
+            ])
+            log.debug 'button: $endpoint  created'
+            log.debug 'child: $child  created'
+            child.sendEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
+        } catch (Exception e) {
+            log.debug "Exception: ${e}"
+        }
+    }
+}
+
+private getButtonName() {
+    def values = device.displayName.endsWith(' 1') ? "${device.displayName[0..-2]}" : "${device.displayName}"
+    return values
 }
