@@ -21,7 +21,7 @@ metadata {
         capability 'Sensor'
         capability 'Health Check'
 
-        fingerprint deviceJoinName: 'Aqara D1 2-button Light Switch (WXKG07LM) - 2020', model: 'lumi.remote.b286acn02',  inClusters: '0000,0003,0019,FFFF,0012', outClusters: '0000,0004,0003,0005,0019,FFFF,0012', manufacturer: 'LUMI', profileId: '0104', endpointId: '01'
+        //fingerprint deviceJoinName: 'Aqara D1 2-button Light Switch (WXKG07LM) - 2020', model: 'lumi.remote.b286acn02',  inClusters: '0000,0003,0019,FFFF,0012', outClusters: '0000,0004,0003,0005,0019,FFFF,0012', manufacturer: 'LUMI', profileId: '0104', endpointId: '01'
     }
 
     // tiles {
