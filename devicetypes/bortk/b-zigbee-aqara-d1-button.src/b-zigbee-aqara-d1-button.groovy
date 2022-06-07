@@ -24,18 +24,18 @@ metadata {
         fingerprint deviceJoinName: 'Aqara D1 2-button Light Switch (WXKG07LM) - 2020', model: 'lumi.remote.b286acn02',  inClusters: '0000,0003,0019,FFFF,0012', outClusters: '0000,0004,0003,0005,0019,FFFF,0012', manufacturer: 'LUMI', profileId: '0104', endpointId: '01'
     }
 
-    tiles {
-        standardTile('button', 'device.button', width: 2, height: 2) {
-            state 'default', label: '', icon: 'st.unknown.zwave.remote-controller', backgroundColor: '#ffffff'
-            state 'button 1 pushed', label: 'pushed #1', icon: 'st.unknown.zwave.remote-controller', backgroundColor: '#00A0DC'
-        }
+    // tiles {
+    //     standardTile('button', 'device.button', width: 2, height: 2) {
+    //         state 'default', label: '', icon: 'st.unknown.zwave.remote-controller', backgroundColor: '#ffffff'
+    //         state 'button 1 pushed', label: 'pushed #1', icon: 'st.unknown.zwave.remote-controller', backgroundColor: '#00A0DC'
+    //     }
 
-        standardTile('refresh', 'device.refresh', inactiveLabel: false, decoration: 'flat') {
-            state 'default', action:'refresh.refresh', icon:'st.secondary.refresh'
-        }
-        main(['button'])
-        details(['button', 'refresh'])
-    }
+    //     standardTile('refresh', 'device.refresh', inactiveLabel: false, decoration: 'flat') {
+    //         state 'default', action:'refresh.refresh', icon:'st.secondary.refresh'
+    //     }
+    //     main(['button'])
+    //     details(['button', 'refresh'])
+    // }
 
     preferences {
         input name: 'debugLogging', type: 'bool', title: 'Display debug log messages?'
@@ -118,6 +118,7 @@ def refresh() {
 }
 
 def ping() {
+    log.debug 'ping'
     refresh()
 }
 
@@ -126,8 +127,8 @@ def configure() {
     def bindings = getModelBindings()
     def cmds = zigbee.onOffConfig() +
             zigbee.configureReporting(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage, DataType.UINT8, 30, 21600, 0x01) +
-            zigbee.enrollResponse() +
-            zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage) + bindings
+            zigbee.enrollResponse() + bindings
+    // + zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage)
     return cmds
 }
 
@@ -139,7 +140,9 @@ def installed() {
 }
 
 def updated() {
-    runIn(2, 'initialize', [overwrite: true])
+    log.debug 'updated'
+    configure()
+    runIn(1, 'initialize', [overwrite: true])
 }
 
 def initialize() {
