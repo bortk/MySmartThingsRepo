@@ -61,6 +61,19 @@ metadata {
         command 'resetBatteryRuntime'
     }
 
+    // tiles {
+    //     standardTile('button', 'device.button', width: 2, height: 2) {
+    //         state 'default', label: '', icon: 'st.unknown.zwave.remote-controller', backgroundColor: '#ffffff'
+    //         state 'button 1 pushed', label: 'pushed #1', icon: 'st.unknown.zwave.remote-controller', backgroundColor: '#00A0DC'
+    //     }
+
+    //     standardTile('refresh', 'device.refresh', inactiveLabel: false, decoration: 'flat') {
+    //         state 'default', action:'refresh.refresh', icon:'st.secondary.refresh'
+    //     }
+    //     main (['button'])
+    //     details(['button', 'refresh'])
+    // }
+
     simulator {
         status 'Press button': 'on/off: 0'
         status 'Release button': 'on/off: 1'
@@ -303,14 +316,25 @@ def installed() {
     state.prefsSetCount = 0
     displayInfoLog(': Installing')
     checkIntervalEvent('')
+    sendEvent(name: 'button', value: 'pushed', isStateChange: true, displayed: false)
+    sendEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
+    initialize()
 }
 
 // configure() runs after installed() when a sensor is paired
 def configure() {
     displayInfoLog(': Configuring')
-    initialize(true)
-    checkIntervalEvent('configured')
-    return
+
+    def bindings = getModelBindings()
+    def cmds = zigbee.onOffConfig() +
+            zigbee.configureReporting(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage, DataType.UINT8, 30, 21600, 0x01) +
+            zigbee.enrollResponse() +
+            zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage) + bindings
+    return cmds
+// Old Aqara code
+    // initialize(true)
+    // checkIntervalEvent('configured')
+    // return
 }
 
 // updated() will run twice every time user presses save in preference settings page
@@ -429,6 +453,13 @@ private addChildButtons(numberOfButtons) {
             log.debug "Exception: ${e}"
         }
     }
+}
+private getModelBindings() {
+    def bindings = []
+    for (def endpoint : 1..1) {
+        bindings += zigbee.addBinding(zigbee.ONOFF_CLUSTER, ['destEndpoint' : endpoint])
+    }
+    bindings
 }
 
 private getButtonName() {
