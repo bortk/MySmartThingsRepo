@@ -67,6 +67,7 @@ metadata {
     }
 
     preferences {
+        input name: 'reloadSettings', type: 'bool', title: 'Reload Settings'
         //Date & Time Config
         input description: '', type: 'paragraph', element: 'paragraph', title: 'DATE & CLOCK'
         input name: 'clockformat', type: 'bool', title: 'Use 24 hour clock?'
@@ -280,6 +281,16 @@ private displayDebugLog(message) {
     log.debug "${device.displayName}${message}"
 // }
 }
+private debugLog(message) {
+    if (debugLogging) {
+        log.debug "${device.displayName}${message}"
+    }
+}
+private debugLog(message, param) {
+    if (debugLogging) {
+        log.debug "${device.displayName}${message}: " + param
+    }
+}
 
 private displayInfoLog(message) {
     // if (infoLogging || state.prefsSetCount < 3) {
@@ -349,8 +360,12 @@ def initialize(newlyPaired) {
     if (childDevices) {
         def event
         for (def endpoint : 1..device.currentValue('numberOfButtons')) {
-            event = createEvent(name: 'button', value: 'pushed', isStateChange: true)
-            sendEventToChild(endpoint, event)
+            try {
+                event = createEvent(name: 'button', value: 'pushed', isStateChange: true)
+                sendEventToChild(endpoint, event)
+            } catch (Exception e) {
+                log.debug "Exception: ${e}"
+            }
         }
     }
 
