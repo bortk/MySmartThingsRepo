@@ -82,13 +82,13 @@ def parseAttrMessage(description) {
 
         switch (descMap.value) {
             case '0000':
-                actionValue = 'Held'
+                actionValue = 'held'
                 break
             case '0001':
-                actionValue = 'Pressed'
+                actionValue = 'pushed'
                 break
             case '0002':
-                actionValue = 'Double pressed'
+                actionValue = 'double-clicked'
                 break
         }
     }
@@ -100,7 +100,7 @@ def parseAttrMessage(description) {
 
     if ( buttonNumber > 0 ) {
         log.debug "parseAttrMessage sendEventToChild ${buttonNumber}"
-        sendEventToChild(buttonNumber, createEvent(name: 'button', value: 'pushed', data: [buttonNumber: buttonNumber], descriptionText: descriptionText, isStateChange: true))
+        sendEventToChild(buttonNumber, createEvent(name: 'button', value: actionValue, data: [buttonNumber: buttonNumber], descriptionText: descriptionText, isStateChange: true))
         map = createEvent(name: 'button', value: 'pushed', data: [buttonNumber: buttonNumber], descriptionText: descriptionText, isStateChange: true)
     }
     return map
