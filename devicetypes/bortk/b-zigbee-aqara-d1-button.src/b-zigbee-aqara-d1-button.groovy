@@ -1,4 +1,4 @@
-/* groovylint-disable CatchException, DuplicateListLiteral, DuplicateMapLiteral, DuplicateNumberLiteral, DuplicateStringLiteral, GStringExpressionWithinString, GetterMethodCouldBeProperty, ImplicitClosureParameter, ImplicitReturnStatement, LineLength, MethodParameterTypeRequired, MethodReturnTypeRequired, NoDef, ParameterReassignment, PublicMethodsBeforeNonPublicMethods, TernaryCouldBeElvis, UnnecessaryElseStatement, UnnecessaryGetter, VariableTypeRequired */
+/* groovylint-disable CatchException, CompileStatic, DuplicateListLiteral, DuplicateMapLiteral, DuplicateNumberLiteral, DuplicateStringLiteral, GStringExpressionWithinString, GetterMethodCouldBeProperty, ImplicitClosureParameter, ImplicitReturnStatement, LineLength, MethodParameterTypeRequired, MethodReturnTypeRequired, NoDef, ParameterReassignment, PublicMethodsBeforeNonPublicMethods, TernaryCouldBeElvis, UnnecessaryElseStatement, UnnecessaryGetter, UnusedImport, VariableTypeRequired */
 /**
  *  Copyright 2022 Bortk
  *
@@ -11,9 +11,8 @@
 import groovy.json.JsonOutput
 import physicalgraph.zigbee.zcl.DataType
 
-/* groovylint-disable-next-line CompileStatic */
 metadata {
-    definition (name: 'B Zigbee Aqara D1 Button', namespace: 'bortk', author: 'bortk', mcdSync: true, ocfDeviceType: 'x.com.st.d.remotecontroller') {
+    definition(name:'B Zigbee Aqara D1 Button', namespace: 'bortk', author: 'bortk', mcdSync: true, ocfDeviceType: 'x.com.st.d.remotecontroller') {
         capability 'Actuator'
         capability 'Button'
         capability 'Holdable Button'
@@ -22,8 +21,12 @@ metadata {
         capability 'Sensor'
         capability 'Health Check'
 
-        fingerprint deviceJoinName: 'Aqara Opple 6 Button Remote (WXCJKG13LM)', model: 'lumi.remote.b686opcn01', profileId:'0104', inClusters:'0012,0003', outClusters:'0006', manufacturer:'LUMI', application: '11', endpointId: '01'
+        fingerprint deviceJoinName: 'Aqara D1 2-button Light Switch (WXKG07LM) - 2020', model: 'lumi.remote.b286acn02',  inClusters: '0000,0003,0019,FFFF,0012', outClusters: '0000,0004,0003,0005,0019,FFFF,0012', manufacturer: 'LUMI', profileId: '0104', endpointId: '01'
     }
+//Button 1:
+//read attr - raw: 14B40100120A5500210100, dni: 14B4, endpoint: 01, cluster: 0012, size: 10, attrId: 0055, result: success, encoding: 21, value: 0001
+//Button 2 :
+//read attr - raw: 14B40200120A5500210100, dni: 14B4, endpoint: 02, cluster: 0012, size: 10, attrId: 0055, result: success, encoding: 21, value: 0001
 
     tiles {
         standardTile('button', 'device.button', width: 2, height: 2) {
@@ -34,7 +37,7 @@ metadata {
         standardTile('refresh', 'device.refresh', inactiveLabel: false, decoration: 'flat') {
             state 'default', action:'refresh.refresh', icon:'st.secondary.refresh'
         }
-        main (['button'])
+        main(['button'])
         details(['button', 'refresh'])
     }
 
@@ -56,58 +59,22 @@ def parse(String description) {
 }
 
 def parseAttrMessage(description) {
+    log.debug "parseAttrMessage description = ${description} "
     def descMap = zigbee.parseDescriptionAsMap(description)
     def map = [:]
     log.debug "parseAttrMessage descMap = ${descMap} "
-    // log.debug "parseAttrMessage descMap.clusterInt = ${descMap.clusterInt} "
-    // log.debug "parseAttrMessage descMap.sourceEndpoint = ${descMap.sourceEndpoint} "
-    // log.debug "parseAttrMessage descMap.commandInt = ${descMap.commandInt} "
-    // log.debug "parseAttrMessage descMap.data = ${descMap.data} "
-    // log.debug "parseAttrMessage descMap.data[0] = ${descMap.data[0]} "
-    // log.debug "parseAttrMessage descMap.data[1] = ${descMap.data[1]} "
-    // log.debug "parseAttrMessage descMap.data[2] = ${descMap.data[2]} "
 
-    int code = -1
-    // log.debug "parseAttrMessage code = $code "
-    if (descMap.data[0] != null) {
-        code = (descMap.data[0] as int)
-    }
-
-    // log.debug "parseAttrMessage code = $code "
     def buttonNumber
-    if (descMap?.clusterInt == 6) {
-        // log.debug 'Button group C (6)'
-        code = descMap.commandInt as int
-        if (code == 0) {
-            log.debug 'Button 1'
-            buttonNumber = 1
-        }
-        else if (code == 1) {
-            log.debug 'Button 2'
-            buttonNumber = 2
-        }
-    }
-    else  if (descMap?.clusterInt ==  8) {
-        // log.debug 'Button group B (8)'
-        if (code == 1) {
-            log.debug 'Button 3'
-            buttonNumber = 3
-        }
-        else if (code == 0) {
-            log.debug 'Button 4'
-            buttonNumber = 4
-        }
-    }
-    else if (descMap?.clusterInt ==  768) {
-        // log.debug 'Button group A (768)'
-        if (code == 1) {
-            log.debug 'Button 5'
-            buttonNumber = 5
-        }
-        else if (code == 3) {
-            log.debug 'Button 6'
-            buttonNumber = 6
-        }
+
+    log.debug "parseAttrMessage descMap.cluster = ${descMap.cluster}"
+    log.debug "parseAttrMessage descMap.endpoint = ${descMap.endpoint}"
+    log.debug "parseAttrMessage descMap.value = ${descMap.value}"
+    log.debug "parseAttrMessage descMap.data = ${descMap.data}"
+
+    if (descMap.cluster == '0012') {
+        buttonValue = Integer.parseInt(descMap.endpoint, 16)
+        actionValue = Integer.parseInt(descMap.value[2..3], 16)
+        buttonNumber = 1
     }
 
     def descriptionText = getButtonName() + " ${buttonNumber} was pushed"
@@ -143,19 +110,6 @@ def configure() {
             zigbee.enrollResponse() +
             zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage) + bindings
     return cmds
-
-    /*
-     logging("Sending init command for Opple Remote...", 100)
-        sendZigbeeCommands([
-            zigbeeReadAttribute(0x0000, 0x0001)[0],
-            zigbeeReadAttribute(0x0000, 0x0005)[0], "delay 187",
-            zigbeeWriteAttribute(0xFCC0, 0x0009, 0x20, 0x01, [mfgCode: "0x115F"])[0],
-            "delay 3001",
-            zigbeeWriteAttribute(0xFCC0, 0x0009, 0x20, 0x01, [mfgCode: "0x115F"])[0],
-            "delay 3002",
-            zigbeeWriteAttribute(0xFCC0, 0x0009, 0x20, 0x01, [mfgCode: "0x115F"])[0]
-        ])
-        */
 }
 
 def installed() {
@@ -171,7 +125,7 @@ def updated() {
 
 def initialize() {
     log.debug 'initialize'
-    def numberOfButtons = 6
+    def numberOfButtons = 2
     log.debug 'numberOfButtons: ' + numberOfButtons
     sendEvent(name: 'numberOfButtons', value: numberOfButtons, isStateChange: false)
     sendEvent(name: 'checkInterval', value: 2 * 60 * 60 + 2 * 60, displayed: false, data: [protocol: 'zigbee', hubHardwareId: device.hub.hardwareID])
@@ -222,7 +176,7 @@ private getSupportedButtonValues() {
 
 private getModelBindings() {
     def bindings = []
-    for (def endpoint : 1..6) {
+    for (def endpoint : 1..2) {
         bindings += zigbee.addBinding(zigbee.ONOFF_CLUSTER, ['destEndpoint' : endpoint])
     }
     bindings
