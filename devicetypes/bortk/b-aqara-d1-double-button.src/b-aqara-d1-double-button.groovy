@@ -17,66 +17,15 @@ metadata {
         capability 'Configuration'
         capability 'Health Check'
 
-        attribute 'lastCheckin', 'string'
-        attribute 'lastCheckinCoRE', 'string'
         attribute 'lastHeld', 'string'
-        attribute 'lastHeldCoRE', 'string'
         attribute 'lastPressed', 'string'
-        attribute 'lastPressedCoRE', 'string'
         attribute 'lastReleased', 'string'
-        attribute 'lastReleasedCoRE', 'string'
         attribute 'batteryRuntime', 'string'
-        attribute 'buttonStatus', 'enum', ['pushed', 'held', 'double-clicked']
 
         fingerprint deviceJoinName: 'Aqara D1 Double Button', model: 'lumi.remote.b286acn02',  inClusters: '0000,0003,0019,FFFF,0012', outClusters: '0000,0004,0003,0005,0019,FFFF,0012', manufacturer: 'LUMI', profileId: '0104', endpointId: '01'
 
         command 'resetBatteryRuntime'
     }
-
-    // simulator {
-    //     status 'Press button': 'on/off: 0'
-    //     status 'Release button': 'on/off: 1'
-    // }
-
-    // tiles(scale: 2) {
-    //     multiAttributeTile(name:'buttonStatus', type: 'lighting', width: 6, height: 4, canChangeIcon: false) {
-    //         tileAttribute ('device.buttonStatus', key: 'PRIMARY_CONTROL') {
-    //             attributeState('default', label:'Pushed', backgroundColor:'#00a0dc', icon:'https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png')
-    //             attributeState('pushed', label:'Pushed', backgroundColor:'#00a0dc', icon:'https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png')
-    //             attributeState('held', label:'Held', backgroundColor:'#00a0dc', icon:'https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png')
-    //             attributeState('double-clicked', label:'Double-clicked', backgroundColor:'#00a0dc', icon:'https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png')
-    //             attributeState('leftpushed', label:'Left Pushed', backgroundColor:'#00a0dc', icon:'https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png')
-    //             attributeState('rightpushed', label:'Right Pushed', backgroundColor:'#00a0dc', icon:'https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png')
-    //             attributeState('bothpushed', label:'Both Pushed', backgroundColor:'#00a0dc', icon:'https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png')
-    //             attributeState('leftdouble-clicked', label:'Left Dbl-clicked', backgroundColor:'#00a0dc', icon:'https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png')
-    //             attributeState('rightdouble-clicked', label:'Right Dbl-clicked', backgroundColor:'#00a0dc', icon:'https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png')
-    //             attributeState('bothdouble-clicked', label:'Both Dbl-clicked', backgroundColor:'#00a0dc', icon:'https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png')
-    //             attributeState('leftheld', label:'Left Held', backgroundColor:'#00a0dc', icon:'https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png')
-    //             attributeState('rightheld', label:'Right Held', backgroundColor:'#00a0dc', icon:'https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png')
-    //             attributeState('bothheld', label:'Both Held', backgroundColor:'#00a0dc', icon:'https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonPushed.png')
-    //             attributeState('released', label:'Released', action: 'momentary.push', backgroundColor:'#ffffff', icon:'https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/ButtonReleased.png')
-    //         }
-    //         tileAttribute('device.lastPressed', key: 'SECONDARY_CONTROL') {
-    //             attributeState 'lastPressed', label:'Last Pressed: ${currentValue}'
-    //         }
-    //     }
-    //     valueTile('battery', 'device.battery', decoration: 'flat', inactiveLabel: false, width: 2, height: 2) {
-    //         state 'battery', label:'${currentValue}%', unit:'%', icon:'https://raw.githubusercontent.com/bspranger/Xiaomi/master/images/XiaomiBattery.png',
-    //         backgroundColors:[
-    //             [value: 10, color: '#bc2323'],
-    //             [value: 26, color: '#f1d801'],
-    //             [value: 51, color: '#44b621']
-    //         ]
-    //     }
-    //     valueTile('lastCheckin', 'device.lastCheckin', decoration: 'flat', inactiveLabel: false, width: 4, height: 1) {
-    //         state 'lastCheckin', label:'Last Event:\n${currentValue}'
-    //     }
-    //     valueTile('batteryRuntime', 'device.batteryRuntime', inactiveLabel: false, decoration: 'flat', width: 4, height: 1) {
-    //         state 'batteryRuntime', label:'Battery Changed: ${currentValue}'
-    //     }
-    //     main (['buttonStatus'])
-    // //details(["buttonStatus","battery","lastCheckin","batteryRuntime"])
-    // }
 
     preferences {
         input name: 'Reload Config', type: 'bool', title: 'Reload Config?'
@@ -194,7 +143,7 @@ private addChildButtons(numberOfButtons) {
     }
 }
 private getSupportedButtonValues() {
-    return ['pushed', 'held', 'double-clicked']
+    return ['pushed', 'double', 'held']
 }
 private getModelBindings() {
     def bindings = []
@@ -209,10 +158,6 @@ def updateLastPressed(pressType) {
     displayDebugLog(": Setting Last $pressType to current date/time")
     sendEvent(name: "last${pressType}", value: formatDate(), displayed: false)
     sendEvent(name: "last${pressType}CoRE", value: now(), displayed: false)
-}
-
-def clearButtonStatus() {
-    sendEvent(name: 'buttonStatus', value: 'released', isStateChange: true, displayed: false)
 }
 
 private displayDebugLog(message) {
@@ -275,7 +220,7 @@ def updated() {
 def initialize(newlyPaired) {
     sendEvent(name: 'DeviceWatch-Enroll', value: JsonOutput.toJson([protocol: 'zigbee', scheme:'untracked']), displayed: false)
     sendEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
-    // clearButtonStatus()
+
     if (!device.currentState('batteryRuntime')?.value) {
         resetBatteryRuntime(newlyPaired)
     }
@@ -285,13 +230,6 @@ def initialize(newlyPaired) {
     if (!childDevices) {
         addChildButtons(numberOfButtons)
     }
-// if (childDevices) {
-//     def event
-//     for (def endpoint : 1..device.currentValue('numberOfButtons')) {
-//         event = createEvent(name: 'button', value: 'pushed', isStateChange: true)
-//         sendEventToChild(endpoint, event)
-//     }
-// }
 }
 
 def setNumButtons() {
