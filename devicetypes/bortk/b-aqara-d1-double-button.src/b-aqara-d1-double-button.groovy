@@ -224,22 +224,12 @@ def initialize(newlyPaired) {
     if (!device.currentState('batteryRuntime')?.value) {
         resetBatteryRuntime(newlyPaired)
     }
-    setNumButtons()
-    displayDebugLog(":initialize numberOfButtons: ${numberOfButtons}")
-
-    if (!childDevices) {
-        addChildButtons(numberOfButtons)
-    }
-}
-
-def setNumButtons() {
-    def modelName = device.getDataValue('model')
     state.numButtons = 2
-    displayInfoLog(": Model is Aqara $modelName.")
     displayInfoLog(": Number of buttons set to ${state.numButtons}.")
     sendEvent(name: 'numberOfButtons', value: state.numButtons, displayed: false)
-    device.currentValue('numberOfButtons')?.times {
-        sendEvent(name: 'button', value: 'pushed', data: [buttonNumber: it + 1], displayed: false)
+
+    if (!childDevices) {
+        addChildButtons(state.numButtons)
     }
 }
 
