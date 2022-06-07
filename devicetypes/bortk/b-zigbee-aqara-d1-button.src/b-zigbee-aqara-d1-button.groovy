@@ -125,10 +125,11 @@ def ping() {
 def configure() {
     log.debug 'Configure'
     def bindings = getModelBindings()
-    def cmds = zigbee.onOffConfig() +
-            zigbee.configureReporting(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage, DataType.UINT8, 30, 21600, 0x01) +
-            zigbee.enrollResponse() + bindings
-    // + zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage)
+    def cmds = zigbee.onOffConfig()
+    cmds += zigbee.configureReporting(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage, DataType.UINT8, 30, 21600, 0x01)
+    cmds += zigbee.enrollResponse()
+    cmds += bindings
+    cmds += zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage)
     return cmds
 }
 
