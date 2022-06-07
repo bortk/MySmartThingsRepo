@@ -61,6 +61,7 @@ def parse(String description) {
 def parseAttrMessage(description) {
     log.debug "parseAttrMessage description = ${description} "
     def descMap = zigbee.parseDescriptionAsMap(description)
+    def map = [:]
     log.debug "parseAttrMessage descMap = ${descMap} "
 
     def buttonNumber = 0
@@ -102,6 +103,7 @@ def parseAttrMessage(description) {
         sendEventToChild(buttonNumber, createEvent(name: 'button', value: 'pushed', data: [buttonNumber: buttonNumber], descriptionText: descriptionText, isStateChange: true))
         map = createEvent(name: 'button', value: 'pushed', data: [buttonNumber: buttonNumber], descriptionText: descriptionText, isStateChange: true)
     }
+    return map
 }
 
 def sendEventToChild(buttonNumber, event) {
