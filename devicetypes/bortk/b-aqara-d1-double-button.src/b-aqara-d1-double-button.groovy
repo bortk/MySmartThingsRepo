@@ -125,7 +125,9 @@ private addChildButtons(numberOfButtons) {
     for (def endpoint : 1..numberOfButtons) {
         try {
             String childDni = "${device.deviceNetworkId}:$endpoint"
+            displayDebugLog(": addChildButtons childDni : $childDni")
             def componentLabel = getButtonName() + "${endpoint}"
+            displayDebugLog(": addChildButtons componentLabel : $componentLabel")
 
             def child = addChildDevice('smartthings', 'Child Button', childDni, device.getHub().getId(), [
                     completedSetup: true,
@@ -134,8 +136,8 @@ private addChildButtons(numberOfButtons) {
                     componentName : "button$endpoint",
                     componentLabel: "Button $endpoint"
             ])
-            log.debug 'button: $endpoint  created'
-            log.debug 'child: $child  created'
+            log.debug "button: ${endpoint}  created"
+            log.debug "child: ${child}  created"
             child.sendEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
         } catch (Exception e) {
             log.debug "Exception: ${e}"
@@ -143,7 +145,9 @@ private addChildButtons(numberOfButtons) {
     }
 }
 private getSupportedButtonValues() {
-    return ['pushed', 'double', 'held']
+    def values
+    values = ['pushed', 'held', 'double']
+    return values
 }
 private getModelBindings() {
     def bindings = []
