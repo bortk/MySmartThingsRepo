@@ -64,7 +64,7 @@ def parseAttrMessage(description) {
     def map = [:]
     log.debug "parseAttrMessage descMap = ${descMap} "
 
-    def buttonNumber
+    def buttonNumber = 0
 
     log.debug "parseAttrMessage descMap.cluster = ${descMap.cluster}"
     log.debug "parseAttrMessage descMap.endpoint = ${descMap.endpoint}"
@@ -72,15 +72,27 @@ def parseAttrMessage(description) {
     log.debug "parseAttrMessage descMap.data = ${descMap.data}"
 
     if (descMap.cluster == '0012') {
-        buttonValue = Integer.parseInt(descMap.endpoint, 16)
-        actionValue = Integer.parseInt(descMap.value[2..3], 16)
-        buttonNumber = 1
+        def buttonValue = Integer.parseInt(descMap.endpoint, 16)
+        log.debug "parseAttrMessage buttonValue = ${buttonValue}"
+
+        def actionValue = Integer.parseInt(descMap.value[2..3], 16)
+        log.debug "parseAttrMessage actionValue = ${actionValue}"
+
+        if (descMap.endpoint == '01') {
+            buttonNumber = 1
+        }
+        else if (descMap.endpoint == '02') {
+            buttonNumber = 2
+        }
     }
+    log.debug "parseAttrMessage buttonNumber = ${buttonNumber}"
 
     def descriptionText = getButtonName() + " ${buttonNumber} was pushed"
-    sendEventToChild(buttonNumber, createEvent(name: 'button', value: 'pushed', data: [buttonNumber: buttonNumber], descriptionText: descriptionText, isStateChange: true))
-    map = createEvent(name: 'button', value: 'pushed', data: [buttonNumber: buttonNumber], descriptionText: descriptionText, isStateChange: true)
-    map
+    if ( buttonNumber > 0 ) {
+        log.debug "parseAttrMessage sendEventToChild ${buttonNumber}"
+        sendEventToChild(buttonNumber, createEvent(name: 'button', value: 'pushed', data: [buttonNumber: buttonNumber], descriptionText: descriptionText, isStateChange: true))
+        map = createEvent(name: 'button', value: 'pushed', data: [buttonNumber: buttonNumber], descriptionText: descriptionText, isStateChange: true)
+    }
 }
 
 def sendEventToChild(buttonNumber, event) {
