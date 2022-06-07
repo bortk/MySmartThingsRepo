@@ -456,7 +456,7 @@ private addChildButtons(numberOfButtons) {
 }
 private getModelBindings() {
     def bindings = []
-    for (def endpoint : 1..1) {
+    for (def endpoint : 1..2) {
         bindings += zigbee.addBinding(zigbee.ONOFF_CLUSTER, ['destEndpoint' : endpoint])
     }
     bindings
