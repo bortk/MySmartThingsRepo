@@ -50,7 +50,7 @@ def parse(String description) {
     def counter = now() % 100
 
     log.debug "****** Parse Description START ***** ${counter}"
-    log.debug "${description} "
+    // log.debug "${description} "
     def result = parseAttrMessage(description)
     log.debug "result ${result} "
     log.debug "------ Parse Description END ----- ${counter}"
