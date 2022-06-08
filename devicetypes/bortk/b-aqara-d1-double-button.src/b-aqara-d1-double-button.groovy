@@ -319,20 +319,16 @@ def refresh() {
     result = zigbee.readAttribute(0x0402, 0x0000, [destEndpoint: 0x01])
 
     displayDebugLog(": refresh() result = ${result}")
-    descMap = zigbee.parseDescriptionAsMap(result)
-    displayDebugLog(": refresh() descMap = ${descMap}")
+    // descMap = zigbee.parseDescriptionAsMap(result)
+    // displayDebugLog(": refresh() descMap = ${descMap}")
 
     result =  zigbee.readAttribute(0x0405, 0x0000, [destEndpoint: 0x02])
     displayDebugLog(": refresh() result = ${result}")
-    descMap = zigbee.parseDescriptionAsMap(result)
-    displayDebugLog(": refresh() descMap = ${descMap}")
 
     result = zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, 0x0020)
 
     cmds += result
     displayDebugLog(": refresh() result = ${result}")
-    descMap = zigbee.parseDescriptionAsMap(result)
-    displayDebugLog(": refresh() descMap = ${descMap}")
 
     displayDebugLog(': refresh() END')
     return cmds
