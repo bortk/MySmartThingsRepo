@@ -28,11 +28,13 @@ metadata {
     }
 
     preferences {
-        input name: 'Reload Config', type: 'bool', title: 'Reload Config?'
-        //Date & Time Config
-        input description: '', type: 'paragraph', element: 'paragraph', title: 'DATE & CLOCK'
-        input name: 'dateformat', type: 'enum', title: 'Set Date Format\nUS (MDY) - UK (DMY) - Other (YMD)', description: 'Date Format', options:['US', 'UK', 'Other']
-        input name: 'clockformat', type: 'bool', title: 'Use 24 hour clock?'
+        input name: 'reloadConfig', type: 'bool', title: 'Reload Config?'
+        input name: 'deleteChildren', type: 'bool', title: 'Delete Child Devices?'
+
+        //Live Logging Message Display Config
+        input description: 'These settings affect the display of messages in the Live Logging tab of the SmartThings IDE.', type: 'paragraph', element: 'paragraph', title: 'Live Logging'
+        input name: 'infoLogging', type: 'bool', title: 'Log info messages?', defaultValue: true
+        input name: 'debugLogging', type: 'bool', title: 'Log debug messages?', defaultValue: true
         //Battery Reset Config
         input description: 'If you have installed a new battery, the toggle below will reset the Changed Battery date to help remember when it was changed.', type: 'paragraph', element: 'paragraph', title: 'CHANGED BATTERY DATE RESET'
         input name: 'battReset', type: 'bool', title: 'Battery Changed?'
@@ -42,15 +44,12 @@ metadata {
         input description: '', type: 'paragraph', element: 'paragraph', title: 'BATTERY VOLTAGE RANGE'
         input name: 'voltsmax', type: 'decimal', title: 'Max Volts\nA battery is at 100% at __ volts\nRange 2.8 to 3.4', range: '2.8..3.4', defaultValue: 3
         input name: 'voltsmin', type: 'decimal', title: 'Min Volts\nA battery is at 0% (needs replacing) at __ volts\nRange 2.0 to 2.7', range: '2..2.7', defaultValue: 2.5
-        //Live Logging Message Display Config
-        input description: 'These settings affect the display of messages in the Live Logging tab of the SmartThings IDE.', type: 'paragraph', element: 'paragraph', title: 'LIVE LOGGING'
-        input name: 'infoLogging', type: 'bool', title: 'Display info log messages?', defaultValue: true
-        input name: 'debugLogging', type: 'bool', title: 'Display debug log messages?', defaultValue: true
     }
 }
 
 //adds functionality to press the center tile as a virtualApp Button
 def push() {
+    displayDebugLog(': push() triggered')
     def result = mapButtonEvent(0, 1)
     displayDebugLog(": Sending event $result")
     sendEvent(result)
@@ -64,25 +63,31 @@ def parse(description) {
 }
 
 def parseAttrMessage(description) {
-    log.debug "parseAttrMessage description = ${description} "
+    displayDebugLog("parseAttrMessage description = ${description} ")
     def descMap = zigbee.parseDescriptionAsMap(description)
     def map = [:]
-    log.debug "parseAttrMessage descMap = ${descMap} "
+    displayDebugLog("parseAttrMessage descMap = ${descMap} ")
 
     def buttonNumber = 0
     def actionValue = ''
 
-    log.debug "parseAttrMessage descMap.cluster = ${descMap.cluster}"
-    log.debug "parseAttrMessage descMap.endpoint = ${descMap.endpoint}"
-    log.debug "parseAttrMessage descMap.value = ${descMap.value}"
-    log.debug "parseAttrMessage descMap.data = ${descMap.data}"
+    displayDebugLog("parseAttrMessage descMap.cluster = ${descMap.cluster}")
+    displayDebugLog("parseAttrMessage descMap.endpoint = ${descMap.endpoint}")
+    displayDebugLog("parseAttrMessage descMap.value = ${descMap.value}")
+    displayDebugLog("parseAttrMessage descMap.data = ${descMap.data}")
 
     if (descMap.cluster == '0012') {
-        if (descMap.endpoint == '01') {
-            buttonNumber = 1
-        }
-        else if (descMap.endpoint == '02') {
-            buttonNumber = 2
+        switch (descMap.endpoint) {
+            case '00':
+                // both buttons pressed together. Map to button 3
+                buttonNumber = 3
+                break
+            case '01':
+                buttonNumber = 1
+                break
+            case '02':
+                buttonNumber = 2
+                break
         }
 
         switch (descMap.value) {
@@ -121,7 +126,9 @@ private getButtonName() {
     def values = device.displayName.endsWith(' 1') ? "${device.displayName[0..-2]}" : "${device.displayName}"
     return values
 }
+
 private addChildButtons(numberOfButtons) {
+    def labels = ['Left', 'Right', 'Both']
     for (def endpoint : 1..numberOfButtons) {
         try {
             String childDni = "${device.deviceNetworkId}:$endpoint"
@@ -134,7 +141,7 @@ private addChildButtons(numberOfButtons) {
                     label         : componentLabel,
                     isComponent   : true,
                     componentName : "button$endpoint",
-                    componentLabel: "Button $endpoint"
+                    componentLabel: labels[endpoint] // replace "Button $endpoint"
             ])
             log.debug "button: ${endpoint}  created"
             log.debug "child: ${child}  created"
@@ -210,6 +217,20 @@ def updated() {
     }
     else if (state.prefsSetCount < 3) {
         state.prefsSetCount = state.prefsSetCount + 1
+    }
+    if (deleteChildren) {
+        displayDebugLog(': Deleting child devices')
+        deleteChildren = false
+        childDevices.each {
+            try {
+                displayDebugLog(": deleting  child ${it.deviceNetworkId}")
+                deleteChildDevice(it.deviceNetworkId)
+                displayDebugLog(": deleted child ${it.deviceNetworkId}")
+            }
+            catch (e) {
+                log.debug "Error deleting ${it.deviceNetworkId}: ${e}"
+            }
+        }
     }
     initialize(false)
     if (battReset) {
