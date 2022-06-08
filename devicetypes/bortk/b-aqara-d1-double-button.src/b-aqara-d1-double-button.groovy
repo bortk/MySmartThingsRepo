@@ -63,6 +63,7 @@ def push() {
     sendEvent(result)
     ping()
     refresh()
+    zigbee.readAttribute(0x0001, 0x0020)
 }
 
 // Parse incoming device messages to generate events
@@ -311,7 +312,7 @@ def refresh() {
     def manufacturer = device.getDataValue('manufacturer')
     displayDebugLog(": refresh() manufacturer = ${manufacturer}")
     def cmds
-    def descMap
+
     def result = zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, 0x0021, [destEndpoint: 0x01])
     cmds = result
     displayDebugLog(": refresh() result = ${result}")
