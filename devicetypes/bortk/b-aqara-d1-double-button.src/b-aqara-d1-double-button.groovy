@@ -222,7 +222,7 @@ def updated() {
     }
     if (deleteChildren) {
         displayDebugLog(': Deleting child devices')
-        deleteChildren = false
+        device.updateSetting(deleteChildren, false)
         childDevices.each {
             try {
                 displayDebugLog(": deleting  child ${it.deviceNetworkId}")
