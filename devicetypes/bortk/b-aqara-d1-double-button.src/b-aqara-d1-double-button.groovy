@@ -52,9 +52,17 @@ def getNUM_OF_BUTTONS() { 3 }
 //adds functionality to press the center tile as a virtualApp Button
 def push() {
     displayDebugLog(': push() triggered')
-    def result = mapButtonEvent(0, 1)
+    def result =  [
+        name: 'button',
+        value: 'pushed',
+        data: [buttonNumber: 0],
+        descriptionText: 'Momentary tile was pushed',
+        isStateChange: true
+    ]
     displayDebugLog(": Sending event $result")
     sendEvent(result)
+    ping()
+    refresh()
 }
 
 // Parse incoming device messages to generate events
@@ -240,8 +248,8 @@ def updated() {
         device.updateSetting('battReset', false)
     }
     checkIntervalEvent('preferences updated')
-    displayInfoLog(': Info message logging enabled')
-    displayDebugLog(': Debug message logging enabled')
+    displayInfoLog(': Info logging enabled')
+    displayDebugLog(': Debug logging enabled')
 }
 
 def initialize(newlyPaired) {
@@ -288,4 +296,30 @@ def formatDate(batteryReset) {
     else {
         return new Date().format("EEE dd MMM yyyy ${timeString}", correctedTimezone)
     }
+}
+
+def ping() {
+    displayDebugLog(': ping()')
+    def result = zigbee.readAttribute(0x0001, 0x0020) // Read the Battery Level
+    displayDebugLog(": ping() result = ${result}")
+    return result
+}
+
+def refresh() {
+    displayDebugLog(': refresh()')
+
+    def manufacturer = device.getDataValue('manufacturer')
+    displayDebugLog(": refresh() manufacturer = ${manufacturer}")
+
+    def result = ''
+    result = zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, 0x0021, [destEndpoint: 0x01])
+    displayDebugLog(": refresh() result = ${result}")
+    /* groovylint-disable-next-line DuplicateMapLiteral */
+    result = zigbee.readAttribute(0x0402, 0x0000, [destEndpoint: 0x01])
+    displayDebugLog(": refresh() result = ${result}")
+    result =  zigbee.readAttribute(0x0405, 0x0000, [destEndpoint: 0x02])
+    displayDebugLog(": refresh() result = ${result}")
+    result = zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, 0x0020)
+    displayDebugLog(": refresh() result = ${result}")
+    displayDebugLog(': refresh() END')
 }
