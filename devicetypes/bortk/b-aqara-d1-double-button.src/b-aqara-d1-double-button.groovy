@@ -1,4 +1,4 @@
-/* groovylint-disable CatchException, CompileStatic, CouldBeElvis, DuplicateListLiteral, DuplicateNumberLiteral, DuplicateStringLiteral, ImplicitClosureParameter, InvertedIfElse, LineLength, MethodParameterTypeRequired, MethodReturnTypeRequired, NoDef, PublicMethodsBeforeNonPublicMethods, TernaryCouldBeElvis, UnnecessaryElseStatement, UnnecessaryGetter, UnnecessarySubstring, UnusedImport, VariableName, VariableTypeRequired */
+/* groovylint-disable CatchException, CompileStatic, CouldBeElvis, DuplicateListLiteral, DuplicateNumberLiteral, DuplicateStringLiteral, GetterMethodCouldBeProperty, ImplicitClosureParameter, InvertedIfElse, LineLength, MethodParameterTypeRequired, MethodReturnTypeRequired, NoDef, PublicMethodsBeforeNonPublicMethods, TernaryCouldBeElvis, UnnecessaryElseStatement, UnnecessaryGetter, UnnecessarySubstring, UnusedImport, VariableName, VariableTypeRequired */
 /**
  *  Aqara D1 2-button Light Switch (WXKG07LM) - 2020
  */
@@ -46,6 +46,8 @@ metadata {
         input name: 'voltsmin', type: 'decimal', title: 'Min Volts\nA battery is at 0% (needs replacing) at __ volts\nRange 2.0 to 2.7', range: '2..2.7', defaultValue: 2.5
     }
 }
+
+def getNUM_OF_BUTTONS() { 3 }
 
 //adds functionality to press the center tile as a virtualApp Button
 def push() {
@@ -158,7 +160,7 @@ private getSupportedButtonValues() {
 }
 private getModelBindings() {
     def bindings = []
-    for (def endpoint : 1..2) {
+    for (def endpoint : 1..NUM_OF_BUTTONS) {
         bindings += zigbee.addBinding(zigbee.ONOFF_CLUSTER, ['destEndpoint' : endpoint])
     }
     bindings
@@ -249,7 +251,7 @@ def initialize(newlyPaired) {
     if (!device.currentState('batteryRuntime')?.value) {
         resetBatteryRuntime(newlyPaired)
     }
-    state.numButtons = 2
+    state.numButtons = NUM_OF_BUTTONS
     displayInfoLog(": Number of buttons set to ${state.numButtons}.")
     sendEvent(name: 'numberOfButtons', value: state.numButtons, displayed: false)
 
