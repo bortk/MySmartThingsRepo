@@ -132,6 +132,7 @@ def ping() {
 def configure() {
     log.debug 'Configure'
     def bindings = getModelBindings()
+    log.debug 'configure bindings:' + bindings
     def batteryVoltage = 0x21
     def cmds = zigbee.onOffConfig() +
             zigbee.configureReporting(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage, DataType.UINT8, 30, 21600, 0x01) +
@@ -237,6 +238,7 @@ private getSupportedButtonValues() {
 }
 
 private getModelBindings() {
+    log.debug 'getModelBindings()'
     def bindings = []
     for (def endpoint : 1..3) {
         bindings += zigbee.addBinding(zigbee.ONOFF_CLUSTER, ['destEndpoint' : endpoint])
