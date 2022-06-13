@@ -219,7 +219,7 @@ private addChildButtons(numberOfButtons) {
     for (def endpoint : 1..numberOfButtons) {
         try {
             String childDni = "${device.deviceNetworkId}:$endpoint"
-            def componentLabel = getButtonName() + " Z ${endpoint}"
+            def componentLabel = getButtonName() + "${endpoint}"
 
             def child = addChildDevice('smartthings', 'Child Button', childDni, device.getHub().getId(), [
                     completedSetup: true,
