@@ -203,7 +203,7 @@ def initialize() {
     }
     if (childDevices) {
         def event
-        for (def endpoint : 1..device.currentValue('numberOfButtons')) {
+        for (def endpoint : 1..numberOfButtons) {
             event = createEvent(name: 'button', value: 'pushed', isStateChange: true)
             sendEventToChild(endpoint, event)
         }
