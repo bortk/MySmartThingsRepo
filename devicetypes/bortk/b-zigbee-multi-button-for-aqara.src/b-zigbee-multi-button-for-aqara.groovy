@@ -172,13 +172,13 @@ def initialize() {
     sendEvent(name: 'checkInterval', value: 2 * 60 * 60 + 2 * 60, displayed: false, data: [protocol: 'zigbee', hubHardwareId: device.hub.hardwareID])
 
     if (deleteChildren) {
-        displayDebugLog(': Deleting child devices')
+        log.debug ': Deleting child devices'
         device.updateSetting('deleteChildren', false)
         childDevices.each {
             try {
-                displayDebugLog(": deleting  child ${it.deviceNetworkId}")
+                log.debug(": deleting  child ${it.deviceNetworkId}")
                 deleteChildDevice(it.deviceNetworkId)
-                displayDebugLog(": deleted child ${it.deviceNetworkId}")
+                log.debug(": deleted child ${it.deviceNetworkId}")
             }
             catch (e) {
                 log.debug "Error deleting ${it.deviceNetworkId}: ${e}"
