@@ -89,15 +89,15 @@ def parseAttrMessage(description) {
 
     if (descMap.cluster == '0012') {
         switch (descMap.endpoint) {
-            case '00':
-                // both buttons pressed together. Map to button 3
-                buttonNumber = 3
-                break
             case '01':
                 buttonNumber = 1
                 break
             case '02':
                 buttonNumber = 2
+                break
+            case '03':
+                // both buttons pressed together. Map to button 3
+                buttonNumber = 3
                 break
         }
 
