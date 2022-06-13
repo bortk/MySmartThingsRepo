@@ -6,7 +6,6 @@
  *  in compliance with the License. You may obtain a copy of the License at:
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
  */
 
 // import groovy.json.JsonOutput
@@ -14,7 +13,7 @@ import physicalgraph.zigbee.zcl.DataType
 
 /* groovylint-disable-next-line CompileStatic */
 metadata {
-    definition (name: 'B Zigbee Multi Button for Aqara', namespace: 'bortk', author: 'SmartThings', mcdSync: true, ocfDeviceType: 'x.com.st.d.remotecontroller') {
+    definition(name: 'B Zigbee Multi Button for Aqara', namespace: 'bortk', author: 'SmartThings', mcdSync: true, ocfDeviceType: 'x.com.st.d.remotecontroller') {
         capability 'Actuator'
         capability 'Button'
         capability 'Holdable Button'
@@ -22,10 +21,8 @@ metadata {
         capability 'Refresh'
         capability 'Sensor'
         capability 'Health Check'
-
-     }
-  fingerprint deviceJoinName: 'Aqara D1 Double Button', model: 'lumi.remote.b286acn02',  inClusters: '0000,0003,0019,FFFF,0012', outClusters: '0000,0004,0003,0005,0019,FFFF,0012', manufacturer: 'LUMI', profileId: '0104', endpointId: '01'
-
+    }
+    fingerprint deviceJoinName: 'Aqara D1 Double Button', model: 'lumi.remote.b286acn02',  inClusters: '0000,0003,0019,FFFF,0012', outClusters: '0000,0004,0003,0005,0019,FFFF,0012', manufacturer: 'LUMI', profileId: '0104', endpointId: '01'
 
     tiles {
         standardTile('button', 'device.button', width: 2, height: 2) {
@@ -36,14 +33,13 @@ metadata {
         standardTile('refresh', 'device.refresh', inactiveLabel: false, decoration: 'flat') {
             state 'default', action:'refresh.refresh', icon:'st.secondary.refresh'
         }
-        main (['button'])
+        main(['button'])
         details(['button', 'refresh'])
     }
 
     preferences {
-input name: 'reloadConfig', type: 'bool', title: 'Reload Config?'
+        input name: 'reloadConfig', type: 'bool', title: 'Reload Config?'
         input name: 'debugLogging', type: 'bool', title: 'Display debug log messages?'
-
     }
 }
 
@@ -195,6 +191,7 @@ def ping() {
 def configure() {
     log.debug 'Configure'
     def bindings = getModelBindings()
+    def batteryVoltage = 0x21
     def cmds = zigbee.onOffConfig() +
             zigbee.configureReporting(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage, DataType.UINT8, 30, 21600, 0x01) +
             zigbee.enrollResponse() +
