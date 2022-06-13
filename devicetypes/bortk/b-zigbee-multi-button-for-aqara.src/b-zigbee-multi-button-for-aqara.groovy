@@ -182,7 +182,7 @@ def initialize() {
 
     if (deleteChildren) {
         log.debug ': Deleting child devices'
-        device.updateSetting('deleteChildren', false)
+        //device.updateSetting('deleteChildren', false)
         childDevices.each {
             try {
                 log.debug(": deleting  child ${it.deviceNetworkId}")
@@ -193,6 +193,8 @@ def initialize() {
                 log.debug "Error deleting ${it.deviceNetworkId}: ${e}"
             }
         }
+        deleteChildren = false
+        log.debug ': Deleted child devices'
     }
 
     if (!childDevices) {
@@ -216,7 +218,7 @@ private addChildButtons(numberOfButtons) {
     for (def endpoint : 1..numberOfButtons) {
         try {
             String childDni = "${device.deviceNetworkId}:$endpoint"
-            def componentLabel = getButtonName() + "${endpoint}"
+            def componentLabel = getButtonName() + " Z ${endpoint}"
 
             def child = addChildDevice('smartthings', 'Child Button', childDni, device.getHub().getId(), [
                     completedSetup: true,
