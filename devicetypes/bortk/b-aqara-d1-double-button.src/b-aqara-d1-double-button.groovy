@@ -47,7 +47,7 @@ metadata {
     }
 }
 
-def getNUM_OF_BUTTONS() { 3 }
+def getNUM_OF_BUTTONS() { 2 }
 
 //adds functionality to press the center tile as a virtualApp Button
 def push() {
@@ -214,7 +214,7 @@ def configure() {
     displayInfoLog(': Configuring')
     initialize(true)
     checkIntervalEvent('configured')
-
+	def batteryVoltage = 0x21
     def bindings = getModelBindings()
     def cmds = zigbee.onOffConfig() +
             zigbee.configureReporting(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage, DataType.UINT8, 30, 21600, 0x01) +
