@@ -40,7 +40,10 @@ metadata {
     preferences {
         input name: 'reloadConfig', type: 'bool', title: 'Reload Config?'
         input name: 'deleteChildren', type: 'bool', title: 'Delete Child Devices?'
-        input name: 'debugLogging', type: 'bool', title: 'Display debug log messages?', defaultValue: true
+        //Live Logging Message Display Config
+        input description: 'These settings affect the display of messages in the Live Logging tab of the SmartThings IDE.', type: 'paragraph', element: 'paragraph', title: 'Live Logging'
+        input name: 'infoLogging', type: 'bool', title: 'Log info messages?', defaultValue: true
+        input name: 'debugLogging', type: 'bool', title: 'Log debug messages?', defaultValue: true
     }
 }
 
@@ -166,6 +169,7 @@ def updated() {
 }
 
 def initialize() {
+    displayInfoLog('Initializing Aqara D1 Double Button')
     log.debug 'initialize'
     def numberOfButtons = 3
     log.debug 'numberOfButtons: ' + numberOfButtons
@@ -249,4 +253,15 @@ private getModelBindings() {
 private getButtonName() {
     def values = device.displayName.endsWith(' 1') ? "${device.displayName[0..-2]}" : "${device.displayName}"
     return values
+}
+
+private displayDebugLog(message) {
+    if (debugLogging) {
+        log.debug "${device.displayName}${message}"
+    }
+}
+private displayInfoLog(message) {
+    if (infoLogging) {
+        log.info "${device.displayName}${message}"
+    }
 }
