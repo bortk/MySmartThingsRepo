@@ -47,7 +47,7 @@ metadata {
     }
 }
 
-def getNUM_OF_BUTTONS() { 2 }
+def getNUM_OF_BUTTONS() { 3 }
 
 //adds functionality to press the center tile as a virtualApp Button
 def push() {
