@@ -147,15 +147,15 @@ private addChildButtons(numberOfButtons) {
             displayDebugLog(":$endpoint: addChildButtons endpoint : $endpoint")
             String childDni = "${device.deviceNetworkId}:$endpoint"
             displayDebugLog(":$endpoint:  addChildButtons childDni : $childDni")
-            def componentLabel = getButtonName() + "${endpoint}"
-            displayDebugLog(":$endpoint: addChildButtons componentLabel : $componentLabel")
+            def childLabel = getButtonName() + "${endpoint}"
+            displayDebugLog(":$endpoint: addChildButtons childLabel : $childLabel")
 
             def child = addChildDevice('smartthings', 'Child Button', childDni, device.getHub().getId(), [
                     completedSetup: true,
-                    label         : componentLabel,
+                    label         : childLabel,
                     isComponent   : true,
-                    componentName : "button$endpoint",
-                    componentLabel: "Button $endpoint"
+                    //componentName : "button$endpoint",
+                    //componentLabel: "Button $endpoint"
             ])
             displayDebugLog( ":$endpoint: button: ${endpoint}  created")
             displayDebugLog(":$endpoint: labels[endpoint - 1] ${labels[endpoint - 1]} ")
