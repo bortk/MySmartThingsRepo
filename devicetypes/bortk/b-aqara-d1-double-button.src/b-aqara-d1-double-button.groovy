@@ -26,6 +26,18 @@ metadata {
 
         command 'resetBatteryRuntime'
     }
+    tiles {
+        standardTile('button', 'device.button', width: 2, height: 2) {
+            state 'default', label: '', icon: 'st.unknown.zwave.remote-controller', backgroundColor: '#ffffff'
+            state 'button 1 pushed', label: 'pushed #1', icon: 'st.unknown.zwave.remote-controller', backgroundColor: '#00A0DC'
+        }
+
+        standardTile('refresh', 'device.refresh', inactiveLabel: false, decoration: 'flat') {
+            state 'default', action:'refresh.refresh', icon:'st.secondary.refresh'
+        }
+        main(['button'])
+        details(['button', 'refresh'])
+    }
 
     preferences {
         input name: 'reloadConfig', type: 'bool', title: 'Reload Config?'
@@ -177,8 +189,8 @@ private addChildButtonsBak(numberOfButtons) {
                     completedSetup: true,
                     label         : childLabel,
                     isComponent   : true,
-                    //componentName : "button$endpoint",
-                    //componentLabel: "Button $endpoint"
+            //componentName : "button$endpoint",
+            //componentLabel: "Button $endpoint"
             ])
             displayDebugLog( ":$endpoint: button: ${endpoint}  created")
             displayDebugLog(":$endpoint: labels[endpoint - 1] ${labels[endpoint - 1]} ")

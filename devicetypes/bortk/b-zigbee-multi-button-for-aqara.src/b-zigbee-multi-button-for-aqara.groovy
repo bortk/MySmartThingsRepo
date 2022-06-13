@@ -39,7 +39,8 @@ metadata {
 
     preferences {
         input name: 'reloadConfig', type: 'bool', title: 'Reload Config?'
-        input name: 'debugLogging', type: 'bool', title: 'Display debug log messages?'
+        input name: 'deleteChildren', type: 'bool', title: 'Delete Child Devices?'
+        input name: 'debugLogging', type: 'bool', title: 'Display debug log messages?', defaultValue: true
     }
 }
 
@@ -55,66 +56,6 @@ def parse(String description) {
     return result
 }
 
-def parseAttrMessage1(description) {
-    def descMap = zigbee.parseDescriptionAsMap(description)
-    def map = [:]
-    log.debug "parseAttrMessage descMap = ${descMap} "
-    // log.debug "parseAttrMessage descMap.clusterInt = ${descMap.clusterInt} "
-    // log.debug "parseAttrMessage descMap.sourceEndpoint = ${descMap.sourceEndpoint} "
-    // log.debug "parseAttrMessage descMap.commandInt = ${descMap.commandInt} "
-    // log.debug "parseAttrMessage descMap.data = ${descMap.data} "
-    // log.debug "parseAttrMessage descMap.data[0] = ${descMap.data[0]} "
-    // log.debug "parseAttrMessage descMap.data[1] = ${descMap.data[1]} "
-    // log.debug "parseAttrMessage descMap.data[2] = ${descMap.data[2]} "
-
-    int code = -1
-    // log.debug "parseAttrMessage code = $code "
-    if (descMap.data[0] != null) {
-        code = (descMap.data[0] as int)
-    }
-
-    // log.debug "parseAttrMessage code = $code "
-    def buttonNumber
-    if (descMap?.clusterInt == 6) {
-        // log.debug 'Button group C (6)'
-        code = descMap.commandInt as int
-        if (code == 0) {
-            log.debug 'Button 1'
-            buttonNumber = 1
-        }
-        else if (code == 1) {
-            log.debug 'Button 2'
-            buttonNumber = 2
-        }
-    }
-    else  if (descMap?.clusterInt ==  8) {
-        // log.debug 'Button group B (8)'
-        if (code == 1) {
-            log.debug 'Button 3'
-            buttonNumber = 3
-        }
-        else if (code == 0) {
-            log.debug 'Button 4'
-            buttonNumber = 4
-        }
-    }
-    else if (descMap?.clusterInt ==  768) {
-        // log.debug 'Button group A (768)'
-        if (code == 1) {
-            log.debug 'Button 5'
-            buttonNumber = 5
-        }
-        else if (code == 3) {
-            log.debug 'Button 6'
-            buttonNumber = 6
-        }
-    }
-
-    def descriptionText = getButtonName() + " ${buttonNumber} was pushed"
-    sendEventToChild(buttonNumber, createEvent(name: 'button', value: 'pushed', data: [buttonNumber: buttonNumber], descriptionText: descriptionText, isStateChange: true))
-    map = createEvent(name: 'button', value: 'pushed', data: [buttonNumber: buttonNumber], descriptionText: descriptionText, isStateChange: true)
-    map
-}
 def parseAttrMessage(description) {
     displayDebugLog("parseAttrMessage description = ${description} ")
     def descMap = zigbee.parseDescriptionAsMap(description)
@@ -229,6 +170,22 @@ def initialize() {
     log.debug 'numberOfButtons: ' + numberOfButtons
     sendEvent(name: 'numberOfButtons', value: numberOfButtons, isStateChange: false)
     sendEvent(name: 'checkInterval', value: 2 * 60 * 60 + 2 * 60, displayed: false, data: [protocol: 'zigbee', hubHardwareId: device.hub.hardwareID])
+
+    if (deleteChildren) {
+        displayDebugLog(': Deleting child devices')
+        device.updateSetting('deleteChildren', false)
+        childDevices.each {
+            try {
+                displayDebugLog(": deleting  child ${it.deviceNetworkId}")
+                deleteChildDevice(it.deviceNetworkId)
+                displayDebugLog(": deleted child ${it.deviceNetworkId}")
+            }
+            catch (e) {
+                log.debug "Error deleting ${it.deviceNetworkId}: ${e}"
+            }
+        }
+    }
+
     if (!childDevices) {
         addChildButtons(numberOfButtons)
     }
@@ -259,9 +216,10 @@ private addChildButtons(numberOfButtons) {
                     componentName : "button$endpoint",
                     componentLabel: "Button $endpoint"
             ])
-            log.debug 'button: $endpoint  created'
-            log.debug 'child: $child  created'
+            log.debug "button: ${endpoint}  created"
+            log.debug "child: ${child}  created"
             child.sendEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
+            log.debug "supportedButtonValues: ${supportedButtonValues}"
         } catch (Exception e) {
             log.debug "Exception: ${e}"
         }
