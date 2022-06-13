@@ -42,20 +42,20 @@ metadata {
         input name: 'deleteChildren', type: 'bool', title: 'Delete Child Devices?'
         //Live Logging Message Display Config
         input description: 'These settings affect the display of messages in the Live Logging tab of the SmartThings IDE.', type: 'paragraph', element: 'paragraph', title: 'Live Logging'
-        input name: 'infoLogging', type: 'bool', title: 'Log info messages?', defaultValue: true
-        input name: 'debugLogging', type: 'bool', title: 'Log debug messages?', defaultValue: true
+        input name: 'infoLog', type: 'bool', title: 'Log info messages?', defaultValue: true
+        input name: 'debugLog', type: 'bool', title: 'Log debug messages?', defaultValue: true
     }
 }
 
 def parse(String description) {
     def counter = now() % 100
 
-    log.debug "****** Parse Description START ***** ${counter}"
-    log.debug "${description} "
+    debugLog("****** Parse Description START ***** ${counter}")
+    debugLog( "${description} ")
     def result = parseAttrMessage(description)
-    log.debug "result ${result} "
-    log.debug "------ Parse Description END ----- ${counter}"
-    log.debug ''
+    debugLog("result ${result} ")
+    debugLog("------ Parse Description END ----- ${counter}")
+    debugLog(' ')
     return result
 }
 
@@ -170,9 +170,9 @@ def updated() {
 
 def initialize() {
     infoLog('Initializing Aqara D1 Double Button')
-    debugLogging('initialize')
+    debugLog('initialize')
     def numberOfButtons = 3
-    debugLogging('numberOfButtons: ' + numberOfButtons)
+    debugLog('numberOfButtons: ' + numberOfButtons)
     sendEvent(name: 'numberOfButtons', value: numberOfButtons, isStateChange: false)
     sendEvent(name: 'checkInterval', value: 2 * 60 * 60 + 2 * 60, displayed: false, data: [protocol: 'zigbee', hubHardwareId: device.hub.hardwareID])
 
@@ -181,7 +181,7 @@ def initialize() {
     }
 
     if (deleteChildren) {
-        debugLogging( ': Deleting child devices' )
+        debugLog( ': Deleting child devices' )
         //device.updateSetting('deleteChildren', false)
         childDevices.each {
             try {
@@ -194,7 +194,7 @@ def initialize() {
             }
         }
 
-        debugLogging(': Deleted child devices')
+        debugLog(': Deleted child devices')
     }
 
     if (!childDevices) {
@@ -227,10 +227,10 @@ private addChildButtons(numberOfButtons) {
                     componentName : "button$endpoint",
                     componentLabel: "Button $endpoint"
             ])
-            debugLogging("button: ${endpoint}  created")
-            debugLogging("child: ${child}  created")
+            debugLog("button: ${endpoint}  created")
+            debugLog("child: ${child}  created")
             child.sendEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
-            debugLogging("supportedButtonValues: ${supportedButtonValues}")
+            debugLog("supportedButtonValues: ${supportedButtonValues}")
         } catch (Exception e) {
             log.debug "Exception: ${e}"
         }
@@ -258,12 +258,12 @@ private getButtonName() {
 }
 
 private debugLog(message) {
-    if (debugLogging) {
+    if (debugLog) {
         log.debug "${device.displayName}${message}"
     }
 }
 private infoLog(message) {
-    if (infoLogging) {
+    if (infoLog) {
         log.info "${device.displayName}${message}"
     }
 }
