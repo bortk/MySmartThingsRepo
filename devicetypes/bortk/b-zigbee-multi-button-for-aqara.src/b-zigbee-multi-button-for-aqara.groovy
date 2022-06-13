@@ -50,12 +50,12 @@ metadata {
 def parse(String description) {
     def counter = now() % 100
 
-    log.debug "****** Parse Description START ***** ${counter}"
-    log.debug "${description} "
+    debugLogging("****** Parse Description START ***** ${counter}")
+    debugLogging("${description} ")
     def result = parseAttrMessage(description)
-    log.debug "result ${result} "
-    log.debug "------ Parse Description END ----- ${counter}"
-    log.debug ''
+    debugLogging("result ${result} ")
+    debugLogging("------ Parse Description END ----- ${counter}")
+    debugLogging('')
     return result
 }
 
@@ -99,14 +99,14 @@ def parseAttrMessage(description) {
                 break
         }
     }
-    log.debug "parseAttrMessage buttonNumber = ${buttonNumber}"
-    log.debug "parseAttrMessage actionValue = ${actionValue}"
+    debugLogging("parseAttrMessage buttonNumber = ${buttonNumber}")
+    debugLogging("parseAttrMessage actionValue = ${actionValue}")
 
     def descriptionText = getButtonName() + " ${buttonNumber} was ${actionValue}"
-    log.debug "${descriptionText}"
+    debugLogging("${descriptionText}")
 
     if ( buttonNumber > 0 ) {
-        log.debug "parseAttrMessage sendEventToChild ${buttonNumber}"
+        debugLogging("parseAttrMessage sendEventToChild ${buttonNumber}")
         sendEventToChild(buttonNumber, createEvent(name: 'button', value: actionValue, data: [buttonNumber: buttonNumber], descriptionText: descriptionText, isStateChange: true))
         map = createEvent(name: 'button', value: 'pushed', data: [buttonNumber: buttonNumber], descriptionText: descriptionText, isStateChange: true)
     }
@@ -120,8 +120,8 @@ def sendEventToChild(buttonNumber, event) {
 }
 
 def refresh() {
-    //     log.debug '#'
-    log.debug 'refresh()'
+    //     debugLogging('#'
+    debugLogging('refresh()')
 //     // log.debug 'read volt:' + zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage)
 //     log.debug '##'
 //     zigbee.enrollResponse()
@@ -133,9 +133,9 @@ def ping() {
 }
 
 def configure() {
-    log.debug 'Configure'
+    debugLogging('Configure')
     def bindings = getModelBindings()
-    log.debug 'configure bindings:' + bindings
+    debugLogging('configure bindings:' + bindings)
     def batteryVoltage = 0x21
     def cmds = zigbee.onOffConfig() +
             zigbee.configureReporting(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage, DataType.UINT8, 30, 21600, 0x01) +
@@ -158,7 +158,7 @@ def configure() {
 }
 
 def installed() {
-    log.debug 'installed'
+    debugLogging('installed')
     sendEvent(name: 'button', value: 'pushed', isStateChange: true, displayed: false)
     sendEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
     initialize()
@@ -170,9 +170,9 @@ def updated() {
 
 def initialize() {
     displayInfoLog('Initializing Aqara D1 Double Button')
-    log.debug 'initialize'
+    debugLogging('initialize')
     def numberOfButtons = 3
-    log.debug 'numberOfButtons: ' + numberOfButtons
+    debugLogging('numberOfButtons: ' + numberOfButtons)
     sendEvent(name: 'numberOfButtons', value: numberOfButtons, isStateChange: false)
     sendEvent(name: 'checkInterval', value: 2 * 60 * 60 + 2 * 60, displayed: false, data: [protocol: 'zigbee', hubHardwareId: device.hub.hardwareID])
 
@@ -181,20 +181,20 @@ def initialize() {
     }
 
     if (deleteChildren) {
-        log.debug ': Deleting child devices'
+        debugLogging( ': Deleting child devices' )
         //device.updateSetting('deleteChildren', false)
         childDevices.each {
             try {
-                log.debug(": deleting  child ${it.deviceNetworkId}")
+                debugLogging(": deleting  child ${it.deviceNetworkId}")
                 deleteChildDevice(it.deviceNetworkId)
-                log.debug(": deleted child ${it.deviceNetworkId}")
+                debugLogging(": deleted child ${it.deviceNetworkId}")
             }
             catch (e) {
                 log.debug "Error deleting ${it.deviceNetworkId}: ${e}"
             }
         }
-        deleteChildren = false
-        log.debug ': Deleted child devices'
+
+        debugLogging(': Deleted child devices')
     }
 
     if (!childDevices) {
@@ -218,7 +218,7 @@ private addChildButtons(numberOfButtons) {
     for (def endpoint : 1..numberOfButtons) {
         try {
             String childDni = "${device.deviceNetworkId}:$endpoint"
-            def componentLabel = getButtonName() + " Z ${endpoint}"
+            def componentLabel = getButtonName() + "${endpoint}"
 
             def child = addChildDevice('smartthings', 'Child Button', childDni, device.getHub().getId(), [
                     completedSetup: true,
@@ -227,10 +227,10 @@ private addChildButtons(numberOfButtons) {
                     componentName : "button$endpoint",
                     componentLabel: "Button $endpoint"
             ])
-            log.debug "button: ${endpoint}  created"
-            log.debug "child: ${child}  created"
+            debugLogging("button: ${endpoint}  created")
+            debugLogging("child: ${child}  created")
             child.sendEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
-            log.debug "supportedButtonValues: ${supportedButtonValues}"
+            debugLogging("supportedButtonValues: ${supportedButtonValues}")
         } catch (Exception e) {
             log.debug "Exception: ${e}"
         }
@@ -244,7 +244,7 @@ private getSupportedButtonValues() {
 }
 
 private getModelBindings() {
-    log.debug 'getModelBindings()'
+    debugLogging('getModelBindings()')
     def bindings = []
     for (def endpoint : 1..3) {
         bindings += zigbee.addBinding(zigbee.ONOFF_CLUSTER, ['destEndpoint' : endpoint])
