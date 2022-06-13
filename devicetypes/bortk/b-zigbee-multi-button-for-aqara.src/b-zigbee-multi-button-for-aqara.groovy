@@ -42,20 +42,20 @@ metadata {
         input name: 'deleteChildren', type: 'bool', title: 'Delete Child Devices?'
         //Live Logging Message Display Config
         input description: 'These settings affect the display of messages in the Live Logging tab of the SmartThings IDE.', type: 'paragraph', element: 'paragraph', title: 'Live Logging'
-        input name: 'infoLogging', type: 'bool', title: 'Log info messages?', defaultValue: true
-        input name: 'debugLogging', type: 'bool', title: 'Log debug messages?', defaultValue: true
+        input name: 'infoLog', type: 'bool', title: 'Log info messages?', defaultValue: true
+        input name: 'debugLog', type: 'bool', title: 'Log debug messages?', defaultValue: true
     }
 }
 
 def parse(String description) {
     def counter = now() % 100
 
-    debugLogging("****** Parse Description START ***** ${counter}")
-    debugLogging("${description} ")
+    debugLog("****** Parse Description START ***** ${counter}")
+    debugLog("${description} ")
     def result = parseAttrMessage(description)
-    debugLogging("result ${result} ")
-    debugLogging("------ Parse Description END ----- ${counter}")
-    debugLogging('')
+    debugLog("result ${result} ")
+    debugLog("------ Parse Description END ----- ${counter}")
+    debugLog('')
     return result
 }
 
@@ -99,14 +99,14 @@ def parseAttrMessage(description) {
                 break
         }
     }
-    debugLogging("parseAttrMessage buttonNumber = ${buttonNumber}")
-    debugLogging("parseAttrMessage actionValue = ${actionValue}")
+    debugLog("parseAttrMessage buttonNumber = ${buttonNumber}")
+    debugLog("parseAttrMessage actionValue = ${actionValue}")
 
     def descriptionText = getButtonName() + " ${buttonNumber} was ${actionValue}"
-    debugLogging("${descriptionText}")
+    debugLog("${descriptionText}")
 
     if ( buttonNumber > 0 ) {
-        debugLogging("parseAttrMessage sendEventToChild ${buttonNumber}")
+        debugLog("parseAttrMessage sendEventToChild ${buttonNumber}")
         sendEventToChild(buttonNumber, createEvent(name: 'button', value: actionValue, data: [buttonNumber: buttonNumber], descriptionText: descriptionText, isStateChange: true))
         map = createEvent(name: 'button', value: 'pushed', data: [buttonNumber: buttonNumber], descriptionText: descriptionText, isStateChange: true)
     }
@@ -120,8 +120,8 @@ def sendEventToChild(buttonNumber, event) {
 }
 
 def refresh() {
-    //     debugLogging('#'
-    debugLogging('refresh()')
+    //     debugLog('#'
+    debugLog('refresh()')
 //     // log.debug 'read volt:' + zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage)
 //     log.debug '##'
 //     zigbee.enrollResponse()
@@ -133,9 +133,9 @@ def ping() {
 }
 
 def configure() {
-    debugLogging('Configure')
+    debugLog('Configure')
     def bindings = getModelBindings()
-    debugLogging('configure bindings:' + bindings)
+    debugLog('configure bindings:' + bindings)
     def batteryVoltage = 0x21
     def cmds = zigbee.onOffConfig() +
             zigbee.configureReporting(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage, DataType.UINT8, 30, 21600, 0x01) +
@@ -158,7 +158,7 @@ def configure() {
 }
 
 def installed() {
-    debugLogging('installed')
+    debugLog('installed')
     sendEvent(name: 'button', value: 'pushed', isStateChange: true, displayed: false)
     sendEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
     initialize()
@@ -169,10 +169,10 @@ def updated() {
 }
 
 def initialize() {
-    displayInfoLog('Initializing Aqara D1 Double Button')
-    debugLogging('initialize')
+    infoLog('Initializing Aqara D1 Double Button')
+    debugLog('initialize')
     def numberOfButtons = 3
-    debugLogging('numberOfButtons: ' + numberOfButtons)
+    debugLog('numberOfButtons: ' + numberOfButtons)
     sendEvent(name: 'numberOfButtons', value: numberOfButtons, isStateChange: false)
     sendEvent(name: 'checkInterval', value: 2 * 60 * 60 + 2 * 60, displayed: false, data: [protocol: 'zigbee', hubHardwareId: device.hub.hardwareID])
 
@@ -181,20 +181,20 @@ def initialize() {
     }
 
     if (deleteChildren) {
-        debugLogging( ': Deleting child devices' )
+        debugLog( ': Deleting child devices' )
         //device.updateSetting('deleteChildren', false)
         childDevices.each {
             try {
-                debugLogging(": deleting  child ${it.deviceNetworkId}")
+                debugLog(": deleting  child ${it.deviceNetworkId}")
                 deleteChildDevice(it.deviceNetworkId)
-                debugLogging(": deleted child ${it.deviceNetworkId}")
+                debugLog(": deleted child ${it.deviceNetworkId}")
             }
             catch (e) {
                 log.debug "Error deleting ${it.deviceNetworkId}: ${e}"
             }
         }
 
-        debugLogging(': Deleted child devices')
+        debugLog(': Deleted child devices')
     }
 
     if (!childDevices) {
@@ -227,10 +227,10 @@ private addChildButtons(numberOfButtons) {
                     componentName : "button$endpoint",
                     componentLabel: "Button $endpoint"
             ])
-            debugLogging("button: ${endpoint}  created")
-            debugLogging("child: ${child}  created")
+            debugLog("button: ${endpoint}  created")
+            debugLog("child: ${child}  created")
             child.sendEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
-            debugLogging("supportedButtonValues: ${supportedButtonValues}")
+            debugLog("supportedButtonValues: ${supportedButtonValues}")
         } catch (Exception e) {
             log.debug "Exception: ${e}"
         }
@@ -244,7 +244,7 @@ private getSupportedButtonValues() {
 }
 
 private getModelBindings() {
-    debugLogging('getModelBindings()')
+    debugLog('getModelBindings()')
     def bindings = []
     for (def endpoint : 1..3) {
         bindings += zigbee.addBinding(zigbee.ONOFF_CLUSTER, ['destEndpoint' : endpoint])
@@ -257,13 +257,13 @@ private getButtonName() {
     return values
 }
 
-private displayDebugLog(message) {
-    if (debugLogging) {
+private debugLog(message) {
+    if (debugLog) {
         log.debug "${device.displayName}${message}"
     }
 }
-private displayInfoLog(message) {
-    if (infoLogging) {
+private infoLog(message) {
+    if (infoLog) {
         log.info "${device.displayName}${message}"
     }
 }
