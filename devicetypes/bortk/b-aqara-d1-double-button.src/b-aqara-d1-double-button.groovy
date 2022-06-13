@@ -157,7 +157,7 @@ private addChildButtons(numberOfButtons) {
                     componentLabel: "Button $endpoint"
             ])
             displayDebugLog( ":$endpoint: button: ${endpoint}  created")
-            displayDebugLog(":$endpoint: labels[endpoint-1] ${labels[endpoint-1]} ")
+            displayDebugLog(":$endpoint: labels[endpoint - 1] ${labels[endpoint - 1]} ")
             displayDebugLog(":$endpoint: child: ${child}  created")
             child.sendEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
         } catch (Exception e) {
@@ -214,7 +214,7 @@ def configure() {
     displayInfoLog(': Configuring')
     initialize(true)
     checkIntervalEvent('configured')
-	def batteryVoltage = 0x21
+    def batteryVoltage = 0x21
     def bindings = getModelBindings()
     def cmds = zigbee.onOffConfig() +
             zigbee.configureReporting(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage, DataType.UINT8, 30, 21600, 0x01) +
