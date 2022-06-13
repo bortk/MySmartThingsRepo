@@ -141,6 +141,7 @@ private getButtonName() {
 private addChildButtons(numberOfButtons) {
     displayDebugLog(": addChildButtons numberOfButtons : $numberOfButtons")
     def labels = ['Left', 'Right', 'Both']
+    displayDebugLog(": addChildButtons labels : $labels")
     for (def endpoint : 1..numberOfButtons) {
         try {
             displayDebugLog(":$endpoint: addChildButtons endpoint : $endpoint")
@@ -191,7 +192,7 @@ private displayDebugLog(message) {
     }
 }
 private displayInfoLog(message) {
-    if (infoLogging || state.prefsSetCount < 3) {
+    if (infoLogging) {
         log.info "${device.displayName}${message}"
     }
 }
@@ -204,7 +205,7 @@ def resetBatteryRuntime(paired) {
 
 // installed() runs just after a sensor is paired using the "Add a Thing" method in the SmartThings mobile app
 def installed() {
-    state.prefsSetCount = 0
+    // state.prefsSetCount = 0
     displayInfoLog(': Installing')
     checkIntervalEvent('')
 }
@@ -223,15 +224,16 @@ def configure() {
     return cmds
 }
 
-// updated() will run twice every time user presses save in preference settings page
+// updated() will run every time user changes preference in the settings page
 def updated() {
     displayInfoLog(': Updating preference settings')
-    if (!state.prefsSetCount) {
-        state.prefsSetCount = 1
-    }
-    else if (state.prefsSetCount < 3) {
-        state.prefsSetCount = state.prefsSetCount + 1
-    }
+    // if (!state.prefsSetCount) {
+    //     state.prefsSetCount = 1
+    // }
+    // else if (state.prefsSetCount < 3) {
+    //     state.prefsSetCount = state.prefsSetCount + 1
+    // }
+
     if (deleteChildren) {
         displayDebugLog(': Deleting child devices')
         device.updateSetting('deleteChildren', false)
