@@ -60,18 +60,18 @@ def parse(String description) {
 }
 
 def parseAttrMessage(description) {
-    displayDebugLog("parseAttrMessage description = ${description} ")
+    debugLog("parseAttrMessage description = ${description} ")
     def descMap = zigbee.parseDescriptionAsMap(description)
     def map = [:]
-    displayDebugLog("parseAttrMessage descMap = ${descMap} ")
+    debugLog("parseAttrMessage descMap = ${descMap} ")
 
     def buttonNumber = 0
     def actionValue = ''
 
-    displayDebugLog("parseAttrMessage descMap.cluster = ${descMap.cluster}")
-    displayDebugLog("parseAttrMessage descMap.endpoint = ${descMap.endpoint}")
-    displayDebugLog("parseAttrMessage descMap.value = ${descMap.value}")
-    displayDebugLog("parseAttrMessage descMap.data = ${descMap.data}")
+    debugLog("parseAttrMessage descMap.cluster = ${descMap.cluster}")
+    debugLog("parseAttrMessage descMap.endpoint = ${descMap.endpoint}")
+    debugLog("parseAttrMessage descMap.value = ${descMap.value}")
+    debugLog("parseAttrMessage descMap.data = ${descMap.data}")
 
     if (descMap.cluster == '0012') {
         switch (descMap.endpoint) {
