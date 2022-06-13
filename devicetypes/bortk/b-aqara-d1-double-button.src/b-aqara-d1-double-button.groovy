@@ -137,9 +137,32 @@ private getButtonName() {
     def values = device.displayName.endsWith(' 1') ? "${device.displayName[0..-2]}" : "${device.displayName}"
     return values
 }
-
+/* groovylint-disable-next-line UnusedPrivateMethodParameter */
 private addChildButtons(numberOfButtons) {
-    displayDebugLog(": addChildButtons numberOfButtons : $numberOfButtons")
+    for (def endpoint : 1..2) {
+        try {
+            String childDni = "${device.deviceNetworkId}:$endpoint"
+            def componentLabel = getButtonName() + "${endpoint}"
+
+            def child = addChildDevice('smartthings', 'Child Button', childDni, device.getHub().getId(), [
+                    completedSetup: true,
+                    label         : componentLabel,
+                    isComponent   : true,
+                    componentName : "button$endpoint",
+                    componentLabel: "Button $endpoint"
+            ])
+            log.debug 'button: $endpoint  created'
+            log.debug 'child: $child  created'
+            child.sendEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
+        } catch (Exception e) {
+            log.debug "Exception: ${e}"
+        }
+    }
+}
+
+/* groovylint-disable-next-line UnusedPrivateMethod */
+private addChildButtonsBak(numberOfButtons) {
+    displayDebugLog(": addChildButtons numberOfButtons : ${numberOfButtons}")
     def labels = ['Left', 'Right', 'Both']
     displayDebugLog(": addChildButtons labels : $labels")
     for (def endpoint : 1..numberOfButtons) {
