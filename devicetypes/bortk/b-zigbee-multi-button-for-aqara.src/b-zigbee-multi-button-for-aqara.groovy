@@ -1,11 +1,32 @@
 /* groovylint-disable CatchException, DuplicateListLiteral, DuplicateMapLiteral, DuplicateNumberLiteral, DuplicateStringLiteral, GStringExpressionWithinString, GetterMethodCouldBeProperty, ImplicitClosureParameter, ImplicitReturnStatement, LineLength, MethodParameterTypeRequired, MethodReturnTypeRequired, NoDef, ParameterReassignment, PublicMethodsBeforeNonPublicMethods, TernaryCouldBeElvis, UnnecessaryElseStatement, UnnecessaryGetter, VariableTypeRequired */
 /**
- *  Copyright 2019 SmartThings
+ *  Copyright 2022 Boris Tsirulnik
+ *
+ *  Aqara D1 2-button Light Switch (WXKG07LM) - 2020
+ *  Device Handler for SmartThings
+ *  Version 0.9.3
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed
+ *  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
+ *  for the specific language governing permissions and limitations under the License.
+ *
+
+ *  Model: Aqara D1 2-button Light Switch (WXKG07LM) - 2020
+ *
+ *  Supported Actions: Push, Hold, Double-Click
+ *
+ *  Application Buttons
+ *  Main - any button
+ *  Button1 - Left button
+ *  Button2 - Right button
+ *  Button3 - Both buttons clicked together
+
+ *  Baterry reading is not supported
  */
 
 // import groovy.json.JsonOutput
@@ -141,7 +162,8 @@ def configure() {
     def cmds = zigbee.onOffConfig() +
             zigbee.configureReporting(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage, DataType.UINT8, 30, 21600, 0x01) +
             zigbee.enrollResponse() +
-            zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage) + bindings
+            zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage) +
+            bindings
     return cmds
 
     /*
