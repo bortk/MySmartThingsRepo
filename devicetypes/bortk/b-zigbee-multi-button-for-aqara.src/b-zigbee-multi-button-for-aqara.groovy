@@ -171,6 +171,10 @@ def initialize() {
     sendEvent(name: 'numberOfButtons', value: numberOfButtons, isStateChange: false)
     sendEvent(name: 'checkInterval', value: 2 * 60 * 60 + 2 * 60, displayed: false, data: [protocol: 'zigbee', hubHardwareId: device.hub.hardwareID])
 
+    if (reloadConfig) {
+        configure()
+    }
+
     if (deleteChildren) {
         log.debug ': Deleting child devices'
         device.updateSetting('deleteChildren', false)
