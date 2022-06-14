@@ -60,13 +60,13 @@ metadata {
     }
 
     preferences {
-        section('Buttons Description') {
+        //section('Buttons Description') {
             input description: 'Supported events for all buttons: Single Click, Double Click and Hold', type: 'paragraph', element: 'paragraph', title: 'Buttons Description'
             input description: 'Any of the 2 buttons was pushed.', type: 'paragraph', element: 'paragraph', title: 'Main Button'
             input description: 'Left Button', type: 'paragraph', element: 'paragraph', title: 'Button1'
             input description: 'Right Button', type: 'paragraph', element: 'paragraph', title: 'Button2'
             input description: 'Both Buttons pushed together', type: 'paragraph', element: 'paragraph', title: 'Button3'
-        }
+        //}
         //input name: 'reloadConfig', type: 'bool', title: 'Reload Config?'
         //input name: 'deleteChildren', type: 'bool', title: 'Delete Child Devices?'
         //Live Logging Message Display Config
