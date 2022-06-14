@@ -235,9 +235,9 @@ def initialize() {
             event = createEvent(name: 'button', value: 'pushed', isStateChange: true)
             sendEventToChild(endpoint, event)
             debugLog(event)
-            event = createEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
-            sendEventToChild(endpoint, event)
-            debugLog(event)
+            // event = createEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
+            // sendEventToChild(endpoint, event)
+            // debugLog(event)
         }
     }
 
@@ -257,7 +257,7 @@ private addChildButtons(numberOfButtons) {
                     completedSetup: true,
                     label         : componentLabel,
                     isComponent   : true,
-                    componentName : "buttonb${endpoint}",
+                    componentName : "button${endpoint}",
                     componentLabel: "ButtonB ${endpoint}"
             ])
             debugLog("button: ${endpoint}  created")
