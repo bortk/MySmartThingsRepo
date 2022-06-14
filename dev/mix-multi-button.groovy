@@ -20,7 +20,7 @@ import physicalgraph.zigbee.zcl.DataType
 
 /* groovylint-disable-next-line CompileStatic */
 metadata {
-    definition (name: 'B Zigbee Multi Button for Opple', namespace: 'bortk', author: 'SmartThings', mcdSync: true, ocfDeviceType: 'x.com.st.d.remotecontroller') {
+    definition (name: 'B Zigbee Multi Button for Opple', namespace: 'bortk-dev', author: 'SmartThings', mcdSync: true, ocfDeviceType: 'x.com.st.d.remotecontroller') {
         capability 'Actuator'
         capability 'Battery'
         capability 'Button'
@@ -58,18 +58,16 @@ metadata {
 }
 
 def parse(String description) {
-
     def counter = now() % 100
-   
+
     log.debug "****** Parse Description START ***** ${counter}"
     log.debug "${description} "
     def result = parseAttrMessage(description)
     log.debug "result ${result} "
     log.debug "------ Parse Description END ----- ${counter}"
-    log.debug ""
+    log.debug ''
     return result
 }
-
 
 def parseAttrMessage(description) {
     def descMap = zigbee.parseDescriptionAsMap(description)
@@ -92,37 +90,36 @@ def parseAttrMessage(description) {
 
     // log.debug "parseAttrMessage code = $code "
     def buttonNumber
-    if (descMap?.clusterInt == 6){
+    if (descMap?.clusterInt == 6) {
         // log.debug 'Button group C (6)'
         code = descMap.commandInt as int
         if (code == 0) {
             log.debug 'Button 5'
             buttonNumber = 5
         }
-        else if (code == 1){
+        else if (code == 1) {
             log.debug 'Button 6'
             buttonNumber = 6
         }
-
     }
-    else  if (descMap?.clusterInt ==  8){
+    else  if (descMap?.clusterInt ==  8) {
         // log.debug 'Button group B (8)'
         if (code == 1) {
             log.debug 'Button 3'
             buttonNumber = 3
         }
-        else if (code == 0){
+        else if (code == 0) {
             log.debug 'Button 4'
             buttonNumber = 4
         }
     }
-    else if (descMap?.clusterInt ==  768){
+    else if (descMap?.clusterInt ==  768) {
         // log.debug 'Button group A (768)'
         if (code == 1) {
             log.debug 'Button 1'
             buttonNumber = 1
         }
-        else if (code == 3){
+        else if (code == 3) {
             log.debug 'Button 2'
             buttonNumber = 2
         }
@@ -131,7 +128,7 @@ def parseAttrMessage(description) {
     def descriptionText = getButtonName() + " ${buttonNumber} was pushed"
     sendEventToChild(buttonNumber, createEvent(name: 'button', value: 'pushed', data: [buttonNumber: buttonNumber], descriptionText: descriptionText, isStateChange: true))
     map = createEvent(name: 'button', value: 'pushed', data: [buttonNumber: buttonNumber], descriptionText: descriptionText, isStateChange: true)
- 
+
     // if (descMap?.clusterInt == zigbee.ONOFF_CLUSTER && descMap.isClusterSpecific) {
     //     map = getButtonEvent(descMap)
     // } else if (descMap?.clusterInt == 0x0005) {
@@ -196,7 +193,6 @@ def sendEventToChild(buttonNumber, event) {
     def child = childDevices.find { it.deviceNetworkId == childDni }
     child?.sendEvent(event)
 }
-
 
 def refresh() {
     return zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage) +

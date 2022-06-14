@@ -20,7 +20,7 @@ import physicalgraph.zigbee.zcl.DataType
 
 /* groovylint-disable-next-line CompileStatic */
 metadata {
-    definition (name: 'B Zigbee Multi Button for Opple', namespace: 'bortk', author: 'SmartThings', mcdSync: true, ocfDeviceType: 'x.com.st.d.remotecontroller') {
+    definition (name: 'B Zigbee Multi Button for Opple', namespace: 'bortk-dev', author: 'SmartThings', mcdSync: true, ocfDeviceType: 'x.com.st.d.remotecontroller') {
         capability 'Actuator'
         capability 'Button'
         capability 'Holdable Button'
@@ -46,12 +46,11 @@ metadata {
     }
 
     preferences {
-        input name: "debugLogging", type: "bool", title: "Display debug log messages?"
+        input name: 'debugLogging', type: 'bool', title: 'Display debug log messages?'
     }
 }
 
 def parse(String description) {
-
     def counter = now() % 100
 
     log.debug "****** Parse Description START ***** ${counter}"
@@ -62,7 +61,6 @@ def parse(String description) {
     log.debug ''
     return result
 }
-
 
 def parseAttrMessage(description) {
     def descMap = zigbee.parseDescriptionAsMap(description)
@@ -95,9 +93,8 @@ def parseAttrMessage(description) {
             log.debug 'Button 2'
             buttonNumber = 2
         }
-
     }
-    else  if (descMap?.clusterInt ==  8){
+    else  if (descMap?.clusterInt ==  8) {
         // log.debug 'Button group B (8)'
         if (code == 1) {
             log.debug 'Button 3'
@@ -132,9 +129,8 @@ def sendEventToChild(buttonNumber, event) {
     child?.sendEvent(event)
 }
 
-
 def refresh() {
-//     log.debug '#'
+    //     log.debug '#'
     log.debug 'refresh()'
 //     // log.debug 'read volt:' + zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage)
 //     log.debug '##'
@@ -184,10 +180,10 @@ def initialize() {
         }
     }
 
-    sendEvent(name:"pushed", value: 0, isStateChange: false, descriptionText: "Refresh of pushed state")
-    sendEvent(name:"held", value: 0, isStateChange: false, descriptionText: "Refresh of held state")
-    sendEvent(name:"lastHoldEpoch", value: 0, isStateChange: false, descriptionText: "Refresh of lastHoldEpoch")
-    sendEvent(name:"doubleTapped", value: 0, isStateChange: false, descriptionText: "Refresh of double-tapped state")
+    sendEvent(name:'pushed', value: 0, isStateChange: false, descriptionText: 'Refresh of pushed state')
+    sendEvent(name:'held', value: 0, isStateChange: false, descriptionText: 'Refresh of held state')
+    sendEvent(name:'lastHoldEpoch', value: 0, isStateChange: false, descriptionText: 'Refresh of lastHoldEpoch')
+    sendEvent(name:'doubleTapped', value: 0, isStateChange: false, descriptionText: 'Refresh of double-tapped state')
 }
 
 private addChildButtons(numberOfButtons) {
@@ -217,7 +213,6 @@ private getSupportedButtonValues() {
     values = ['pushed', 'held']
     return values
 }
-
 
 private getModelBindings() {
     def bindings = []
