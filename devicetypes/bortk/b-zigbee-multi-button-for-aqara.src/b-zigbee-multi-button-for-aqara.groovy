@@ -248,7 +248,7 @@ private addChildButtons(numberOfButtons) {
                     label         : componentLabel,
                     isComponent   : true,
                     componentName : "button$endpoint",
-                    componentLabel: "Button $endpoint"
+                    componentLabel: "ButtonB $endpoint"
             ])
             debugLog("button: ${endpoint}  created")
             debugLog("child: ${child}  created")
