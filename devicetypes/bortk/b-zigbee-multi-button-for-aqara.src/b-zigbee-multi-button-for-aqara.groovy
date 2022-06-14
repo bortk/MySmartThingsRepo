@@ -182,8 +182,6 @@ def configure() {
 
 def installed() {
     log.debug 'installed'
-    sendEvent(name: 'button', value: 'pushed', isStateChange: true, displayed: false)
-    sendEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
     initialize()
 }
 
@@ -196,29 +194,28 @@ def initialize() {
     debugLog('initialize')
     def numberOfButtons = 3
     debugLog('numberOfButtons: ' + numberOfButtons)
+
+    sendEvent(name: 'button', value: 'pushed', isStateChange: true, displayed: false)
+    sendEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
     sendEvent(name: 'numberOfButtons', value: numberOfButtons, isStateChange: false)
     sendEvent(name: 'checkInterval', value: 2 * 60 * 60 + 2 * 60, displayed: false, data: [protocol: 'zigbee', hubHardwareId: device.hub.hardwareID])
 
-    if (reloadConfig) {
-        configure()
-    }
+    // if (deleteChildren) {
+    //     debugLog( ': Deleting child devices' )
+    //     //device.updateSetting('deleteChildren', false)
+    //     childDevices.each {
+    //         try {
+    //             log.debug(": deleting  child ${it.deviceNetworkId}")
+    //             deleteChildDevice(it.deviceNetworkId)
+    //             log.debug(": deleted child ${it.deviceNetworkId}")
+    //         }
+    //         catch (e) {
+    //             log.debug "Error deleting ${it.deviceNetworkId}: ${e}"
+    //         }
+    //     }
 
-    if (deleteChildren) {
-        debugLog( ': Deleting child devices' )
-        //device.updateSetting('deleteChildren', false)
-        childDevices.each {
-            try {
-                log.debug(": deleting  child ${it.deviceNetworkId}")
-                deleteChildDevice(it.deviceNetworkId)
-                log.debug(": deleted child ${it.deviceNetworkId}")
-            }
-            catch (e) {
-                log.debug "Error deleting ${it.deviceNetworkId}: ${e}"
-            }
-        }
-
-        debugLog(': Deleted child devices')
-    }
+    //     debugLog(': Deleted child devices')
+    // }
 
     if (!childDevices) {
         addChildButtons(numberOfButtons)
@@ -247,8 +244,8 @@ private addChildButtons(numberOfButtons) {
                     completedSetup: true,
                     label         : componentLabel,
                     isComponent   : true,
-                    componentName : "button$endpoint",
-                    componentLabel: "ButtonB $endpoint"
+                    componentName : "buttonb${endpoint}",
+                    componentLabel: "ButtonB ${endpoint}"
             ])
             debugLog("button: ${endpoint}  created")
             debugLog("child: ${child}  created")
