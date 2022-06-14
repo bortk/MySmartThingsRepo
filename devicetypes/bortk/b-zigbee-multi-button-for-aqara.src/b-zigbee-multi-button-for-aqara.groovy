@@ -221,15 +221,19 @@ def initialize() {
     }
 
     if (!childDevices) {
+        debugLog('No child devices. Creating new childdeveices')
         addChildButtons(numberOfButtons)
     }
     if (childDevices) {
+        debugLog('configuring child devices')
         def event
         for (def endpoint : 1..numberOfButtons) {
             event = createEvent(name: 'button', value: 'pushed', isStateChange: true)
             sendEventToChild(endpoint, event)
+            debugLog(event)
             event = createEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
             sendEventToChild(endpoint, event)
+            debugLog(event)
         }
     }
 
@@ -293,11 +297,11 @@ private getButtonName() {
 
 private debugLog(message) {
     if (debugLog) {
-        log.debug "${device.displayName}${message}"
+        log.debug "${device.displayName}: ${message}"
     }
 }
 private infoLog(message) {
     if (infoLog) {
-        log.info "${device.displayName}${message}"
+        log.info "${device.displayName}: ${message}"
     }
 }
