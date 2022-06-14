@@ -4,7 +4,7 @@
  *
  *  Aqara D1 2-button Light Switch (WXKG07LM) - 2020
  *  Device Handler for SmartThings
- *  Version 0.9.4
+ *  Version 0.9.5
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
@@ -60,17 +60,21 @@ metadata {
     }
 
     preferences {
-        input description: 'Main Button will be triggered if any of the 2 buttons was triggered. Supported events for all buttons: Single Click, Double Click and Hold',
-         type: 'paragraph', element: 'paragraph', title: 'Main Button'
-        input description: 'Left Button', type: 'paragraph', element: 'paragraph', title: 'Button1'
-        input description: 'Right Button', type: 'paragraph', element: 'paragraph', title: 'Button2'
-        input description: 'Both Buttons triggered together', type: 'paragraph', element: 'paragraph', title: 'Button3'
+        section('Buttons Description') {
+            input description: 'Supported events for all buttons: Single Click, Double Click and Hold', element: 'paragraph'
+            input description: 'Any of the 2 buttons was pushed.', type: 'paragraph', element: 'paragraph', title: 'Main Button'
+            input description: 'Left Button', type: 'paragraph', element: 'paragraph', title: 'Button1'
+            input description: 'Right Button', type: 'paragraph', element: 'paragraph', title: 'Button2'
+            input description: 'Both Buttons pushed together', type: 'paragraph', element: 'paragraph', title: 'Button3'
+        }
         //input name: 'reloadConfig', type: 'bool', title: 'Reload Config?'
         //input name: 'deleteChildren', type: 'bool', title: 'Delete Child Devices?'
         //Live Logging Message Display Config
-        input description: 'These settings affect the display of messages in the Live Logging tab of the SmartThings IDE.', type: 'paragraph', element: 'paragraph', title: 'Live Logging'
-        input name: 'infoLog', type: 'bool', title: 'Log info messages?', defaultValue: true
-        input name: 'debugLog', type: 'bool', title: 'Log debug messages?', defaultValue: true
+        section('Live Logging') {
+            input description: 'These settings affect the display of messages in the Live Logging tab of the SmartThings IDE.', type: 'paragraph', element: 'paragraph'
+            input name: 'infoLog', type: 'bool', title: 'Log info messages?', defaultValue: true
+            input name: 'debugLog', type: 'bool', title: 'Log debug messages?', defaultValue: true
+        }
     }
 }
 
@@ -227,9 +231,9 @@ def initialize() {
             event = createEvent(name: 'button', value: 'pushed', isStateChange: true)
             sendEventToChild(endpoint, event)
             debugLog(event)
-            // event = createEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
-            // sendEventToChild(endpoint, event)
-            // debugLog(event)
+        // event = createEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
+        // sendEventToChild(endpoint, event)
+        // debugLog(event)
         }
 
         // def btnValues = supportedButtonValues.encodeAsJSON()
