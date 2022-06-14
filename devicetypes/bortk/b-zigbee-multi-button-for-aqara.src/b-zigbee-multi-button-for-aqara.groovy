@@ -227,24 +227,25 @@ def initialize() {
             event = createEvent(name: 'button', value: 'pushed', isStateChange: true)
             sendEventToChild(endpoint, event)
             debugLog(event)
-        // event = createEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
-        // sendEventToChild(endpoint, event)
-        // debugLog(event)
+            event = createEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
+            sendEventToChild(endpoint, event)
+            debugLog(event)
         }
 
-        def btnValues = supportedButtonValues.encodeAsJSON()
+        // def btnValues = supportedButtonValues.encodeAsJSON()
 
-        childDevices.each
-        {
-            // it.setLabel( "")
-            debugLog(" child device: ${it}")
-            debugLog(" current: ${it.currentValue('supportedButtonValues')}")
-            debugLog(" target: ${btnValues}")
-            if (it.currentValue('supportedButtonValues') != btnValues ) {
-                log.warn 'updating supported button values'
-                it.sendEvent(name:'supportedButtonValues', value: btnValues, displayed:false)
-            }
-        }
+    // childDevices.each
+    // {
+    //     // it.setLabel( "")
+    //     debugLog(" child device: ${it}")
+    //     debugLog(" current: ${it.currentValue('supportedButtonValues')}")
+    //     debugLog(" target: ${btnValues}")
+    //     if (it.currentValue('supportedButtonValues') != btnValues ) {
+    //        // log.warn 'updating supported button values'
+    //         event = createEvent(
+    //         it.sendEvent(name:'supportedButtonValues', value: btnValues, displayed:false)
+    //     }
+    // }
     }
 
     sendEvent(name:'pushed', value: 0, isStateChange: false, descriptionText: 'Refresh of pushed state')
