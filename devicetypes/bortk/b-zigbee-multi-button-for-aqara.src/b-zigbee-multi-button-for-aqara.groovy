@@ -4,7 +4,7 @@
  *
  *  Aqara D1 2-button Light Switch (WXKG07LM) - 2020
  *  Device Handler for SmartThings
- *  Version 0.9.3
+ *  Version 0.9.4
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
@@ -60,8 +60,11 @@ metadata {
     }
 
     preferences {
-        input name: 'reloadConfig', type: 'bool', title: 'Reload Config?'
-        input name: 'deleteChildren', type: 'bool', title: 'Delete Child Devices?'
+        input description: 'Main - Any of the 2 buttons was triggered \n Button1 - Left Button \n Button2 - Right Button \n Button3 - Both Buttons triggered together',
+         type: 'paragraph', element: 'paragraph', title: 'Buttons Description'
+
+        // input name: 'reloadConfig', type: 'bool', title: 'Reload Config?'
+        //input name: 'deleteChildren', type: 'bool', title: 'Delete Child Devices?'
         //Live Logging Message Display Config
         input description: 'These settings affect the display of messages in the Live Logging tab of the SmartThings IDE.', type: 'paragraph', element: 'paragraph', title: 'Live Logging'
         input name: 'infoLog', type: 'bool', title: 'Log info messages?', defaultValue: true
@@ -166,19 +169,6 @@ def configure() {
             zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage) +
             bindings
     return cmds
-
-    /*
-     logging("Sending init command for Opple Remote...", 100)
-        sendZigbeeCommands([
-            zigbeeReadAttribute(0x0000, 0x0001)[0],
-            zigbeeReadAttribute(0x0000, 0x0005)[0], "delay 187",
-            zigbeeWriteAttribute(0xFCC0, 0x0009, 0x20, 0x01, [mfgCode: "0x115F"])[0],
-            "delay 3001",
-            zigbeeWriteAttribute(0xFCC0, 0x0009, 0x20, 0x01, [mfgCode: "0x115F"])[0],
-            "delay 3002",
-            zigbeeWriteAttribute(0xFCC0, 0x0009, 0x20, 0x01, [mfgCode: "0x115F"])[0]
-        ])
-        */
 }
 
 def installed() {
@@ -187,7 +177,6 @@ def installed() {
 }
 
 def updated() {
-    //runIn(2, 'initialize', [overwrite: true])
     debugLog('updated()')
     initialize()
 }
@@ -198,34 +187,34 @@ def initialize() {
     def numberOfButtons = 3
     debugLog('numberOfButtons: ' + numberOfButtons)
 
-    if (reloadConfig) {
-        configure()
-    }
+    // if (reloadConfig) {
+    //     configure()
+    // }
 
     sendEvent(name: 'button', value: 'pushed', isStateChange: true, displayed: false)
     sendEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
     sendEvent(name: 'numberOfButtons', value: numberOfButtons, isStateChange: false)
     sendEvent(name: 'checkInterval', value: 2 * 60 * 60 + 2 * 60, displayed: false, data: [protocol: 'zigbee', hubHardwareId: device.hub.hardwareID])
 
-    if (deleteChildren) {
-        debugLog( ': Deleting child devices' )
-        //device.updateSetting('deleteChildren', false)
-        childDevices.each {
-            try {
-                debugLog(": deleting  child ${it.deviceNetworkId}")
-                deleteChildDevice(it.deviceNetworkId)
-                debugLog(": deleted child ${it.deviceNetworkId}")
-            }
-            catch (e) {
-                log.debug "Error deleting ${it.deviceNetworkId}: ${e}"
-            }
-        }
+    // if (deleteChildren) {
+    //     debugLog( ': Deleting child devices' )
+    //     //device.updateSetting('deleteChildren', false)
+    //     childDevices.each {
+    //         try {
+    //             debugLog(": deleting  child ${it.deviceNetworkId}")
+    //             deleteChildDevice(it.deviceNetworkId)
+    //             debugLog(": deleted child ${it.deviceNetworkId}")
+    //         }
+    //         catch (e) {
+    //             log.debug "Error deleting ${it.deviceNetworkId}: ${e}"
+    //         }
+    //     }
 
-        debugLog(': Deleted child devices')
-    }
+    //     debugLog(': Deleted child devices')
+    // }
 
     if (!childDevices) {
-        debugLog('No child devices. Creating new childdeveices')
+        debugLog('No child devices. Creating new child devices')
         addChildButtons(numberOfButtons)
     }
     if (childDevices) {
