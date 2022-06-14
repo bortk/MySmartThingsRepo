@@ -73,7 +73,7 @@ def parse(String description) {
     def counter = now() % 100
 
     debugLog("****** Parse Description START ***** ${counter}")
-    debugLog( "${description} ")
+    debugLog("${description} ")
     def result = parseAttrMessage(description)
     debugLog("result ${result} ")
     debugLog("------ Parse Description END ----- ${counter}")
@@ -117,7 +117,7 @@ def parseAttrMessage(description) {
                 actionValue = 'pushed'
                 break
             case '0002':
-                actionValue = 'double-clicked'
+                actionValue = 'double'
                 break
         }
     }
@@ -130,7 +130,7 @@ def parseAttrMessage(description) {
     if ( buttonNumber > 0 ) {
         debugLog("parseAttrMessage sendEventToChild ${buttonNumber}")
         sendEventToChild(buttonNumber, createEvent(name: 'button', value: actionValue, data: [buttonNumber: buttonNumber], descriptionText: descriptionText, isStateChange: true))
-        map = createEvent(name: 'button', value: 'pushed', data: [buttonNumber: buttonNumber], descriptionText: descriptionText, isStateChange: true)
+        map = createEvent(name: 'button', value: actionValue, data: [buttonNumber: buttonNumber], descriptionText: descriptionText, isStateChange: true)
     }
     return map
 }
@@ -235,9 +235,23 @@ def initialize() {
             event = createEvent(name: 'button', value: 'pushed', isStateChange: true)
             sendEventToChild(endpoint, event)
             debugLog(event)
-            // event = createEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
-            // sendEventToChild(endpoint, event)
-            // debugLog(event)
+        // event = createEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
+        // sendEventToChild(endpoint, event)
+        // debugLog(event)
+        }
+
+        def btnValues = supportedButtonValues.encodeAsJSON()
+
+        childDevices.each
+        {
+            // it.setLabel( "")
+            debugLog(" child device: ${it}")
+            debugLog(" current: ${it.currentValue('supportedButtonValues')}")
+            debugLog(" target: ${btnValues}")
+            if (it.currentValue('supportedButtonValues') != btnValues ) {
+                log.warn 'updating supported button values'
+                it.sendEvent(name:'supportedButtonValues', value: btnValues, displayed:false)
+            }
         }
     }
 
