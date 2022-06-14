@@ -225,6 +225,8 @@ def initialize() {
         for (def endpoint : 1..numberOfButtons) {
             event = createEvent(name: 'button', value: 'pushed', isStateChange: true)
             sendEventToChild(endpoint, event)
+            event = createEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
+            sendEventToChild(endpoint, event)
         }
     }
 
@@ -238,7 +240,7 @@ private addChildButtons(numberOfButtons) {
     for (def endpoint : 1..numberOfButtons) {
         try {
             String childDni = "${device.deviceNetworkId}:$endpoint"
-            def componentLabel = getButtonName() + "_${endpoint}"
+            def componentLabel = getButtonName() + "${endpoint}"
 
             def child = addChildDevice('smartthings', 'Child Button', childDni, device.getHub().getId(), [
                     completedSetup: true,
@@ -255,15 +257,15 @@ private addChildButtons(numberOfButtons) {
             log.debug "Exception: ${e}"
         }
     }
-    def childL = addChildDevice('smartthings', 'Child Button', "${device.deviceNetworkId}:Left", device.getHub().getId(), [
-                    completedSetup: true,
-                    label         : 'Left Label',
-                    isComponent   : true,
-                    componentName : 'leftcomponentname',
-                    componentLabel: 'Left Component Label'
-            ])
-    debugLog('button: Left created')
-    childL.sendEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
+// def childL = addChildDevice('smartthings', 'Child Button', "${device.deviceNetworkId}:Left", device.getHub().getId(), [
+//                 completedSetup: true,
+//                 label         : 'Left Label',
+//                 isComponent   : true,
+//                 componentName : 'leftcomponentname',
+//                 componentLabel: 'Left Component Label'
+//         ])
+// debugLog('button: Left created')
+// childL.sendEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
 }
 
 private getSupportedButtonValues() {
