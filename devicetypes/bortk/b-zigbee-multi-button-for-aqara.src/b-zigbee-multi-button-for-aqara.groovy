@@ -200,22 +200,22 @@ def initialize() {
     sendEvent(name: 'numberOfButtons', value: numberOfButtons, isStateChange: false)
     sendEvent(name: 'checkInterval', value: 2 * 60 * 60 + 2 * 60, displayed: false, data: [protocol: 'zigbee', hubHardwareId: device.hub.hardwareID])
 
-    // if (deleteChildren) {
-    //     debugLog( ': Deleting child devices' )
-    //     //device.updateSetting('deleteChildren', false)
-    //     childDevices.each {
-    //         try {
-    //             log.debug(": deleting  child ${it.deviceNetworkId}")
-    //             deleteChildDevice(it.deviceNetworkId)
-    //             log.debug(": deleted child ${it.deviceNetworkId}")
-    //         }
-    //         catch (e) {
-    //             log.debug "Error deleting ${it.deviceNetworkId}: ${e}"
-    //         }
-    //     }
+    if (deleteChildren) {
+        debugLog( ': Deleting child devices' )
+        //device.updateSetting('deleteChildren', false)
+        childDevices.each {
+            try {
+                log.debug(": deleting  child ${it.deviceNetworkId}")
+                deleteChildDevice(it.deviceNetworkId)
+                log.debug(": deleted child ${it.deviceNetworkId}")
+            }
+            catch (e) {
+                log.debug "Error deleting ${it.deviceNetworkId}: ${e}"
+            }
+        }
 
-    //     debugLog(': Deleted child devices')
-    // }
+        debugLog(': Deleted child devices')
+    }
 
     if (!childDevices) {
         addChildButtons(numberOfButtons)
@@ -238,7 +238,7 @@ private addChildButtons(numberOfButtons) {
     for (def endpoint : 1..numberOfButtons) {
         try {
             String childDni = "${device.deviceNetworkId}:$endpoint"
-            def componentLabel = getButtonName() + "${endpoint}"
+            def componentLabel = getButtonName() + "_${endpoint}"
 
             def child = addChildDevice('smartthings', 'Child Button', childDni, device.getHub().getId(), [
                     completedSetup: true,
@@ -255,6 +255,15 @@ private addChildButtons(numberOfButtons) {
             log.debug "Exception: ${e}"
         }
     }
+    def childL = addChildDevice('smartthings', 'Child Button', "${device.deviceNetworkId}:Left", device.getHub().getId(), [
+                    completedSetup: true,
+                    label         : 'Left Label',
+                    isComponent   : true,
+                    componentName : 'leftcomponentname',
+                    componentLabel: 'Left Component Label'
+            ])
+    debugLog('button: Left created')
+    childL.sendEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
 }
 
 private getSupportedButtonValues() {
