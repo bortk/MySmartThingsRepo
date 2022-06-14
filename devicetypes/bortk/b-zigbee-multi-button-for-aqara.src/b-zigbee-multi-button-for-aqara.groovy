@@ -70,8 +70,8 @@ metadata {
         //input name: 'reloadConfig', type: 'bool', title: 'Reload Config?'
         //input name: 'deleteChildren', type: 'bool', title: 'Delete Child Devices?'
         //Live Logging Message Display Config
-        section('LIVE LOGGING', 'section1') {
-            paragraph 'test'
+        section('LIVE LOGGING') {
+            paragraph ' hello'
             input description: 'TT These settings affect the display of messages in the Live Logging tab of the SmartThings IDE.', type: 'paragraph', element: 'paragraph', title: 'Live Logging'
             input name: 'infoLog', type: 'bool', title: 'Log info messages?', defaultValue: true
             input name: 'debugLog', type: 'bool', title: 'Log debug messages?', defaultValue: true
