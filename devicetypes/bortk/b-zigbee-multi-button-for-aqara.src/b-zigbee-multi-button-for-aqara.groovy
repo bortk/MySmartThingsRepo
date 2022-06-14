@@ -61,21 +61,23 @@ metadata {
 
     preferences {
             //section('Buttons Description') {
-            input description: 'Supported events for all buttons: Single Click, Double Click and Hold', type: 'paragraph', element: 'paragraph', title: 'Buttons Description'
-            input description: 'Any of the 2 buttons was pushed.', type: 'paragraph', element: 'paragraph', title: 'Main Button'
-            input description: 'Left Button', type: 'paragraph', element: 'paragraph', title: 'Button1'
-            input description: 'Right Button', type: 'paragraph', element: 'paragraph', title: 'Button2'
-            input description: 'Both Buttons pushed together', type: 'paragraph', element: 'paragraph', title: 'Button3'
+            input description: '', type: 'paragraph', element: 'paragraph', title: 'Buttons Description'
+            input description: 'Supported events for all buttons: Single Click, Double Click and Hold', type: 'paragraph', element: 'paragraph', title: ''
+            input description: 'Any of the 2 buttons was pushed', type: 'paragraph', element: 'paragraph', title: 'Main: Any'
+            input description: 'Left Button', type: 'paragraph', element: 'paragraph', title: 'Button1: Left '
+            input description: 'Right Button', type: 'paragraph', element: 'paragraph', title: 'Button2: Right'
+            input description: 'Both Buttons pushed together', type: 'paragraph', element: 'paragraph', title: 'Button3: Both'
         //}
         //input name: 'reloadConfig', type: 'bool', title: 'Reload Config?'
         //input name: 'deleteChildren', type: 'bool', title: 'Delete Child Devices?'
         //Live Logging Message Display Config
-        section('LIVE LOGGING') {
-            paragraph ' hello'
-            input description: 'TT These settings affect the display of messages in the Live Logging tab of the SmartThings IDE.', type: 'paragraph', element: 'paragraph', title: 'Live Logging'
+        input description: ' ', type: 'paragraph', element: 'paragraph', title: ' '
+        input description: ' ', type: 'paragraph', element: 'paragraph', title: 'Live Logging'
+
+            input description: 'These settings affect the display of messages in the Live Logging tab of the SmartThings IDE.', type: 'paragraph', element: 'paragraph', title: ' '
+
             input name: 'infoLog', type: 'bool', title: 'Log info messages?', defaultValue: true
             input name: 'debugLog', type: 'bool', title: 'Log debug messages?', defaultValue: true
-        }
     }
 }
 
