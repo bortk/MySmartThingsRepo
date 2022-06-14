@@ -60,10 +60,12 @@ metadata {
     }
 
     preferences {
-        input description: 'Main - Any of the 2 buttons was triggered \n Button1 - Left Button \n Button2 - Right Button \n Button3 - Both Buttons triggered together',
-         type: 'paragraph', element: 'paragraph', title: 'Buttons Description'
-
-        // input name: 'reloadConfig', type: 'bool', title: 'Reload Config?'
+        input description: 'Main Button will be triggered if any of the 2 buttons was triggered. Supported events for all buttons: Single Click, Double Click and Hold',
+         type: 'paragraph', element: 'paragraph', title: 'Main Button'
+        input description: 'Left Button', type: 'paragraph', element: 'paragraph', title: 'Button1'
+        input description: 'Right Button', type: 'paragraph', element: 'paragraph', title: 'Button2'
+        input description: 'Both Buttons triggered together', type: 'paragraph', element: 'paragraph', title: 'Button3'
+        //input name: 'reloadConfig', type: 'bool', title: 'Reload Config?'
         //input name: 'deleteChildren', type: 'bool', title: 'Delete Child Devices?'
         //Live Logging Message Display Config
         input description: 'These settings affect the display of messages in the Live Logging tab of the SmartThings IDE.', type: 'paragraph', element: 'paragraph', title: 'Live Logging'
@@ -127,8 +129,9 @@ def parseAttrMessage(description) {
     debugLog("parseAttrMessage buttonNumber = ${buttonNumber}")
     debugLog("parseAttrMessage actionValue = ${actionValue}")
 
-    def descriptionText = getButtonName() + " ${buttonNumber} was ${actionValue}"
-    debugLog("${descriptionText}")
+    debugLog('generating description text')
+    def descriptionText = "${getButtonName()} ${buttonNumber} was ${actionValue}"
+    debugLog(descriptionText)
 
     if ( buttonNumber > 0 ) {
         debugLog("parseAttrMessage sendEventToChild ${buttonNumber}")
