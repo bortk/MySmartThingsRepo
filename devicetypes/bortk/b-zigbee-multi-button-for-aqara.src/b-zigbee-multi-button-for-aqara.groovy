@@ -198,6 +198,10 @@ def initialize() {
     def numberOfButtons = 3
     debugLog('numberOfButtons: ' + numberOfButtons)
 
+    if (reloadConfig) {
+        configure()
+    }
+
     sendEvent(name: 'button', value: 'pushed', isStateChange: true, displayed: false)
     sendEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
     sendEvent(name: 'numberOfButtons', value: numberOfButtons, isStateChange: false)
