@@ -121,14 +121,14 @@ def parseAttrMessage(description) {
                 break
         }
     }
-    log.debug "parseAttrMessage buttonNumber = ${buttonNumber}"
-    log.debug "parseAttrMessage actionValue = ${actionValue}"
+    debugLog("parseAttrMessage buttonNumber = ${buttonNumber}")
+    debugLog("parseAttrMessage actionValue = ${actionValue}")
 
     def descriptionText = getButtonName() + " ${buttonNumber} was ${actionValue}"
-    log.debug "${descriptionText}"
+    debugLog("${descriptionText}")
 
     if ( buttonNumber > 0 ) {
-        log.debug "parseAttrMessage sendEventToChild ${buttonNumber}"
+        debugLog("parseAttrMessage sendEventToChild ${buttonNumber}")
         sendEventToChild(buttonNumber, createEvent(name: 'button', value: actionValue, data: [buttonNumber: buttonNumber], descriptionText: descriptionText, isStateChange: true))
         map = createEvent(name: 'button', value: 'pushed', data: [buttonNumber: buttonNumber], descriptionText: descriptionText, isStateChange: true)
     }
@@ -143,7 +143,7 @@ def sendEventToChild(buttonNumber, event) {
 
 def refresh() {
     //     log.debug '#'
-    log.debug 'refresh()'
+    debugLog('refresh()')
 //     // log.debug 'read volt:' + zigbee.readAttribute(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage)
 //     log.debug '##'
 //     zigbee.enrollResponse()
@@ -151,13 +151,14 @@ def refresh() {
 }
 
 def ping() {
+    debugLog('ping()')
     refresh()
 }
 
 def configure() {
-    log.debug 'Configure'
+    debugLog('configure()')
     def bindings = getModelBindings()
-    log.debug 'configure bindings:' + bindings
+
     def batteryVoltage = 0x21
     def cmds = zigbee.onOffConfig() +
             zigbee.configureReporting(zigbee.POWER_CONFIGURATION_CLUSTER, batteryVoltage, DataType.UINT8, 30, 21600, 0x01) +
@@ -181,17 +182,19 @@ def configure() {
 }
 
 def installed() {
-    log.debug 'installed'
+    debugLog('installed()')
     initialize()
 }
 
 def updated() {
-    runIn(2, 'initialize', [overwrite: true])
+    //runIn(2, 'initialize', [overwrite: true])
+    debugLog('updated()')
+    initialize()
 }
 
 def initialize() {
     infoLog('Initializing Aqara D1 Double Button')
-    debugLog('initialize')
+    debugLog('initialize()')
     def numberOfButtons = 3
     debugLog('numberOfButtons: ' + numberOfButtons)
 
@@ -205,9 +208,9 @@ def initialize() {
         //device.updateSetting('deleteChildren', false)
         childDevices.each {
             try {
-                log.debug(": deleting  child ${it.deviceNetworkId}")
+                debugLog(": deleting  child ${it.deviceNetworkId}")
                 deleteChildDevice(it.deviceNetworkId)
-                log.debug(": deleted child ${it.deviceNetworkId}")
+                debugLog(": deleted child ${it.deviceNetworkId}")
             }
             catch (e) {
                 log.debug "Error deleting ${it.deviceNetworkId}: ${e}"
