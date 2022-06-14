@@ -12,7 +12,7 @@ import groovy.json.JsonOutput
 import physicalgraph.zigbee.zcl.DataType
 
 metadata {
-    definition(name:'B Zigbee Aqara D1 Button', namespace: 'bortk', author: 'bortk', mcdSync: true, ocfDeviceType: 'x.com.st.d.remotecontroller') {
+    definition(name:'B Zigbee Aqara D1 Button', namespace: 'bortk-dev', author: 'bortk', mcdSync: true, ocfDeviceType: 'x.com.st.d.remotecontroller') {
         capability 'Actuator'
         capability 'Button'
         capability 'Holdable Button'

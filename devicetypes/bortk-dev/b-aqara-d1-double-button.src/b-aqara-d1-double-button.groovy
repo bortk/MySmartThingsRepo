@@ -7,7 +7,7 @@
  import physicalgraph.zigbee.zcl.DataType
 
 metadata {
-    definition(name: 'B Aqara D1 Double Button', namespace: 'bortk', author: 'bortk', ocfDeviceType: 'x.com.st.d.remotecontroller') {
+    definition(name: 'B Aqara D1 Double Button', namespace: 'bortk-dev', author: 'bortk', ocfDeviceType: 'x.com.st.d.remotecontroller') {
         capability 'Battery'
         capability 'Sensor'
         capability 'Button'

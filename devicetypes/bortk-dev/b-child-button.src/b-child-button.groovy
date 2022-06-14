@@ -14,7 +14,7 @@
  *
  */
 metadata {
-	definition (name: "B Child Button", namespace: "bortk", author: "SmartThings", ocfDeviceType: "x.com.st.d.remotecontroller") {
+	definition (name: "B Child Button", namespace: "bortk-dev", author: "SmartThings", ocfDeviceType: "x.com.st.d.remotecontroller") {
 		capability "Button"
 		capability "Holdable Button"
 		capability "Sensor"
