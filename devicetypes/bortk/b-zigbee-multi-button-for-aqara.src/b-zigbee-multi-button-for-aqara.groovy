@@ -227,9 +227,9 @@ def initialize() {
             event = createEvent(name: 'button', value: 'pushed', isStateChange: true)
             sendEventToChild(endpoint, event)
             debugLog(event)
-            event = createEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
-            sendEventToChild(endpoint, event)
-            debugLog(event)
+            // event = createEvent(name: 'supportedButtonValues', value: supportedButtonValues.encodeAsJSON(), displayed: false)
+            // sendEventToChild(endpoint, event)
+            // debugLog(event)
         }
 
         // def btnValues = supportedButtonValues.encodeAsJSON()
