@@ -1,6 +1,6 @@
 /*
  *  Integrated ZigBee Switch
- * 
+ *
  *  Copyright 2020 SmartThings
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -15,9 +15,9 @@
  *  License for the specific language governing permissions and limitations
  *  under the License.
  *
- *  author : woobooung@gmail.com 
+ *  author : woobooung@gmail.com
  */
-public static String version() { return "v0.0.31.20210213" }
+public static String version() { return 'v0.0.31.20210213' }
 /*
  *   2021/02/13 >>> v0.0.31 - Add useelink model: "TS011F"
  *   2021/01/15 >>> v0.0.30 - Add Zemismart 2gang manufacturer: "_TZ3000_7hp93xpr", model: "TS0002"
@@ -56,11 +56,12 @@ public static String version() { return "v0.0.31.20210213" }
 
 import java.lang.Math
 import groovy.json.JsonOutput
+
 /*
     > Usage <
 
     Example) Bandi 3gang switch model
-    IDE Device Data   
+    IDE Device Data
       manufacturer: _TYZB01_pdevogdj
       model: TS0003
 
@@ -71,7 +72,7 @@ import groovy.json.JsonOutput
     fingerprint endpointId: "01", profileId: "0104", deviceId: "0100", inClusters: "0000, 000A, 0004, 0005, 0006", outClusters: "0019", manufacturer: "_TYZB01_pdevogdj", model: "TS0003", deviceJoinName: "Bandi Zigbee Switch 1"
 
     > Step 2 - Add MODEL_MAP
-    private getMODEL_MAP() { 
+    private getMODEL_MAP() {
         [
             'TS0003' : 3,
             ....
@@ -85,7 +86,7 @@ import groovy.json.JsonOutput
     > Step 4 - request add device infos to woobooung@gmail.com
 */
 
-private getMODEL_MAP() { 
+private getMODEL_MAP() {
     [
         'TS0601' : 4,
         'TS0004' : 4,
@@ -123,136 +124,136 @@ private getMODEL_MAP() {
 }
 
 metadata {
-    definition(name: "BIntegrated ZigBee Switch", namespace: "bortk", author: "Booung", ocfDeviceType: "oic.d.switch", vid: "generic-switch") {
-        capability "Actuator"
-        capability "Configuration"
-        capability "Refresh"
-        capability "Health Check"
-        capability "Switch"
+    definition(name: 'BIntegrated ZigBee Switch', namespace: 'bortk-dev', author: 'Booung', ocfDeviceType: 'oic.d.switch', vid: 'generic-switch') {
+        capability 'Actuator'
+        capability 'Configuration'
+        capability 'Refresh'
+        capability 'Health Check'
+        capability 'Switch'
 
-        command "childOn", ["string"]
-        command "childOff", ["string"]
+        command 'childOn', ['string']
+        command 'childOff', ['string']
 
         // HejHome & Bandi ZigBee Multi Switch
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0100", inClusters: "0000, 000A, 0004, 0005, 0006", outClusters: "0019", manufacturer: "_TZ3000_pdevogdj", model: "TS0003", deviceJoinName: "HejHome ZigBee Switch 1"
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0100", inClusters: "0000, 000A, 0004, 0005, 0006", outClusters: "0019", manufacturer: "_TZ3000_tas0zemd", model: "TS0002", deviceJoinName: "HejHome ZigBee Switch 1"
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0100", inClusters: "0000, 000A, 0004, 0005, 0006", outClusters: "0019", manufacturer: "_TZ3000_ddg0cycp", model: "TS0001", deviceJoinName: "HejHome ZigBee Switch"
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0100", inClusters: "0000, 000A, 0004, 0005, 0006", outClusters: "0019", manufacturer: "_TYZB01_pdevogdj", model: "TS0003", deviceJoinName: "HejHome ZigBee Switch 1"
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0100", inClusters: "0000, 000A, 0004, 0005, 0006", outClusters: "0019", manufacturer: "_TYZB01_tas0zemd", model: "TS0002", deviceJoinName: "HejHome ZigBee Switch 1"
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0100", inClusters: "0000, 000A, 0004, 0005, 0006", outClusters: "0019", manufacturer: "_TYZB01_ddg0cycp", model: "TS0001", deviceJoinName: "HejHome ZigBee Switch"
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0100', inClusters: '0000, 000A, 0004, 0005, 0006', outClusters: '0019', manufacturer: '_TZ3000_pdevogdj', model: 'TS0003', deviceJoinName: 'HejHome ZigBee Switch 1'
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0100', inClusters: '0000, 000A, 0004, 0005, 0006', outClusters: '0019', manufacturer: '_TZ3000_tas0zemd', model: 'TS0002', deviceJoinName: 'HejHome ZigBee Switch 1'
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0100', inClusters: '0000, 000A, 0004, 0005, 0006', outClusters: '0019', manufacturer: '_TZ3000_ddg0cycp', model: 'TS0001', deviceJoinName: 'HejHome ZigBee Switch'
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0100', inClusters: '0000, 000A, 0004, 0005, 0006', outClusters: '0019', manufacturer: '_TYZB01_pdevogdj', model: 'TS0003', deviceJoinName: 'HejHome ZigBee Switch 1'
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0100', inClusters: '0000, 000A, 0004, 0005, 0006', outClusters: '0019', manufacturer: '_TYZB01_tas0zemd', model: 'TS0002', deviceJoinName: 'HejHome ZigBee Switch 1'
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0100', inClusters: '0000, 000A, 0004, 0005, 0006', outClusters: '0019', manufacturer: '_TYZB01_ddg0cycp', model: 'TS0001', deviceJoinName: 'HejHome ZigBee Switch'
 
         // DAWON DNS ZigBee Multi Switch
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0103", inClusters: "0000, 0004, 0003, 0006, 0019, 0002, 0009", outClusters: "0000, 0004, 0003, 0006, 0019, 0002, 0009", manufacturer: "DAWON_DNS", model: "PM-S140-ZB", deviceJoinName: "DAWON ZigBee Switch"
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0103", inClusters: "0000, 0004, 0003, 0006, 0019, 0002, 0009", outClusters: "0000, 0004, 0003, 0006, 0019, 0002, 0009", manufacturer: "DAWON_DNS", model: "PM-S240-ZB", deviceJoinName: "DAWON ZigBee Switch 1"
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0103", inClusters: "0000, 0004, 0003, 0006, 0019, 0002, 0009", outClusters: "0000, 0004, 0003, 0006, 0019, 0002, 0009", manufacturer: "DAWON_DNS", model: "PM-S340-ZB", deviceJoinName: "DAWON ZigBee Switch 1"
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0103', inClusters: '0000, 0004, 0003, 0006, 0019, 0002, 0009', outClusters: '0000, 0004, 0003, 0006, 0019, 0002, 0009', manufacturer: 'DAWON_DNS', model: 'PM-S140-ZB', deviceJoinName: 'DAWON ZigBee Switch'
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0103', inClusters: '0000, 0004, 0003, 0006, 0019, 0002, 0009', outClusters: '0000, 0004, 0003, 0006, 0019, 0002, 0009', manufacturer: 'DAWON_DNS', model: 'PM-S240-ZB', deviceJoinName: 'DAWON ZigBee Switch 1'
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0103', inClusters: '0000, 0004, 0003, 0006, 0019, 0002, 0009', outClusters: '0000, 0004, 0003, 0006, 0019, 0002, 0009', manufacturer: 'DAWON_DNS', model: 'PM-S340-ZB', deviceJoinName: 'DAWON ZigBee Switch 1'
 
         // Zemi ZigBee Multi Switch
-        fingerprint endpointId: "10", profileId: "0104", inClusters: "0000, 0003, 0004, 0005, 0006", manufacturer: "Feibit Inc co.", model: "FB56+ZSW1GKJ2.7", deviceJoinName: "Zemi ZigBee Switch"
-        fingerprint endpointId: "10", profileId: "0104", deviceId: "0002", inClusters: "0000, 0005, 0004, 0006", outClusters: "0000", manufacturer: "Feibit Inc co.", model: "FB56+ZSW1HKJ2.5", deviceJoinName: "Zemi ZigBee Switch 1"
-        fingerprint endpointId: "10", profileId: "0104", deviceId: "0002", inClusters: "0000, 0003, 0004, 0005, 0006", manufacturer: "Feibit Inc co.", model: "FB56+ZSW1IKJ2.7", deviceJoinName: "Zemi ZigBee Switch 1"
-        fingerprint endpointId: "12", profileId: "0104", deviceId: "0002", inClusters: "0000, 0005, 0004, 0006", manufacturer: "Feibit Inc co.", model: "FB56+ZSW1IKJ2.5", deviceJoinName: "Zemi ZigBee Switch 1"
-        fingerprint endpointId: "0B", profileId: "C05E", inClusters: "0000, 0004, 0003, 0006, 0005, 1000, 0008", outClusters: "0019", manufacturer: "FeiBit", model: "FNB56-ZSW01LX2.0", deviceJoinName: "Zemi ZigBee Switch"
-        fingerprint endpointId: "0B", profileId: "C05E", inClusters: "0000, 0004, 0003, 0006, 0005, 1000, 0008", outClusters: "0019", manufacturer: "FeiBit", model: "FNB56-ZSW02LX2.0", deviceJoinName: "Zemi ZigBee Switch 1"
-        fingerprint endpointId: "01", profileId: "C05E", inClusters: "0000, 0004, 0003, 0006, 0005, 1000, 0008", outClusters: "0019", manufacturer: "FeiBit", model: "FNB56-ZSW03LX2.0", deviceJoinName: "Zemi ZigBee Switch 1"
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0100", inClusters: "0000, 0003, 0004, 0005, 0006", outClusters: "0019", manufacturer: "3A Smart Home DE", model: "LXN59-2S7LX1.0", deviceJoinName: "Zemi ZigBee inline Switch 1"
-        fingerprint endpointId: "01", profileId: "C05E", deviceId: "0000", inClusters: "0000, 0004, 0003, 0006, 0005", outClusters: "0019", manufacturer: "3A Smart Home DE", model: "LXN-3S27LX1.0", deviceJoinName: "Zemi ZigBee Switch 1"
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0100", inClusters: "0000 000A 0004 0005 0006", outClusters: "0019", manufacturer: "_TZ3000_7hp93xpr", model: "TS0002", deviceJoinName: "Zemi ZigBee Switch 1"
+        fingerprint endpointId: '10', profileId: '0104', inClusters: '0000, 0003, 0004, 0005, 0006', manufacturer: 'Feibit Inc co.', model: 'FB56+ZSW1GKJ2.7', deviceJoinName: 'Zemi ZigBee Switch'
+        fingerprint endpointId: '10', profileId: '0104', deviceId: '0002', inClusters: '0000, 0005, 0004, 0006', outClusters: '0000', manufacturer: 'Feibit Inc co.', model: 'FB56+ZSW1HKJ2.5', deviceJoinName: 'Zemi ZigBee Switch 1'
+        fingerprint endpointId: '10', profileId: '0104', deviceId: '0002', inClusters: '0000, 0003, 0004, 0005, 0006', manufacturer: 'Feibit Inc co.', model: 'FB56+ZSW1IKJ2.7', deviceJoinName: 'Zemi ZigBee Switch 1'
+        fingerprint endpointId: '12', profileId: '0104', deviceId: '0002', inClusters: '0000, 0005, 0004, 0006', manufacturer: 'Feibit Inc co.', model: 'FB56+ZSW1IKJ2.5', deviceJoinName: 'Zemi ZigBee Switch 1'
+        fingerprint endpointId: '0B', profileId: 'C05E', inClusters: '0000, 0004, 0003, 0006, 0005, 1000, 0008', outClusters: '0019', manufacturer: 'FeiBit', model: 'FNB56-ZSW01LX2.0', deviceJoinName: 'Zemi ZigBee Switch'
+        fingerprint endpointId: '0B', profileId: 'C05E', inClusters: '0000, 0004, 0003, 0006, 0005, 1000, 0008', outClusters: '0019', manufacturer: 'FeiBit', model: 'FNB56-ZSW02LX2.0', deviceJoinName: 'Zemi ZigBee Switch 1'
+        fingerprint endpointId: '01', profileId: 'C05E', inClusters: '0000, 0004, 0003, 0006, 0005, 1000, 0008', outClusters: '0019', manufacturer: 'FeiBit', model: 'FNB56-ZSW03LX2.0', deviceJoinName: 'Zemi ZigBee Switch 1'
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0100', inClusters: '0000, 0003, 0004, 0005, 0006', outClusters: '0019', manufacturer: '3A Smart Home DE', model: 'LXN59-2S7LX1.0', deviceJoinName: 'Zemi ZigBee inline Switch 1'
+        fingerprint endpointId: '01', profileId: 'C05E', deviceId: '0000', inClusters: '0000, 0004, 0003, 0006, 0005', outClusters: '0019', manufacturer: '3A Smart Home DE', model: 'LXN-3S27LX1.0', deviceJoinName: 'Zemi ZigBee Switch 1'
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0100', inClusters: '0000 000A 0004 0005 0006', outClusters: '0019', manufacturer: '_TZ3000_7hp93xpr', model: 'TS0002', deviceJoinName: 'Zemi ZigBee Switch 1'
 
         // eZex ZigBee Multi Switch
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0100", inClusters: "0000 0003 0004 0006", outClusters: "0006, 000A, 0019", manufacturer: "", model: "E220-KR6N0Z1-HA", deviceJoinName: "eZex ZigBee Switch 1"
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0100", inClusters: "0000 0003 0004 0006", outClusters: "0006, 000A, 0019", manufacturer: "", model: "E220-KR4N0Z1-HA", deviceJoinName: "eZex ZigBee Switch 1"
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0100', inClusters: '0000 0003 0004 0006', outClusters: '0006, 000A, 0019', manufacturer: '', model: 'E220-KR6N0Z1-HA', deviceJoinName: 'eZex ZigBee Switch 1'
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0100', inClusters: '0000 0003 0004 0006', outClusters: '0006, 000A, 0019', manufacturer: '', model: 'E220-KR4N0Z1-HA', deviceJoinName: 'eZex ZigBee Switch 1'
 
         // Aqara Switch
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0100", inClusters: "0000, 0002, 0003, 0004, 0005, 0006, 0009, 0702, 0B04", outClusters: "000A, 0019", manufacturer: "LUMI", model: "lumi.switch.b1naus01", deviceJoinName: "Aqara Switch"
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0100", inClusters: "0000, 0002, 0003, 0004, 0005, 0006, 0009, 0702, 0B04", outClusters: "000A, 0019", manufacturer: "LUMI", model: "lumi.switch.b2naus01", deviceJoinName: "Aqara Switch 1"
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0100", inClusters: "0000, 0002, 0003, 0004, 0005, 0006, 0009, 0702, 0B04", outClusters: "000A, 0019", manufacturer: "LUMI", model: "lumi.switch.b3naus01", deviceJoinName: "Aqara Switch 1"
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0100", inClusters: "0000, 0002, 0003, 0004, 0005, 0006, 0009", outClusters: "000A, 0019", manufacturer: "LUMI", model: "lumi.switch.b2laus01", deviceJoinName: "Aqara Switch 1"
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0006", inClusters: "0000, 0003, 0001, 0002, 0019, 000A", outClusters: "0000, 000A, 0019", manufacturer: "LUMI", model: "lumi.ctrl_neutral1", deviceJoinName: "Aqara Switch"
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0100', inClusters: '0000, 0002, 0003, 0004, 0005, 0006, 0009, 0702, 0B04', outClusters: '000A, 0019', manufacturer: 'LUMI', model: 'lumi.switch.b1naus01', deviceJoinName: 'Aqara Switch'
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0100', inClusters: '0000, 0002, 0003, 0004, 0005, 0006, 0009, 0702, 0B04', outClusters: '000A, 0019', manufacturer: 'LUMI', model: 'lumi.switch.b2naus01', deviceJoinName: 'Aqara Switch 1'
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0100', inClusters: '0000, 0002, 0003, 0004, 0005, 0006, 0009, 0702, 0B04', outClusters: '000A, 0019', manufacturer: 'LUMI', model: 'lumi.switch.b3naus01', deviceJoinName: 'Aqara Switch 1'
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0100', inClusters: '0000, 0002, 0003, 0004, 0005, 0006, 0009', outClusters: '000A, 0019', manufacturer: 'LUMI', model: 'lumi.switch.b2laus01', deviceJoinName: 'Aqara Switch 1'
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0006', inClusters: '0000, 0003, 0001, 0002, 0019, 000A', outClusters: '0000, 000A, 0019', manufacturer: 'LUMI', model: 'lumi.ctrl_neutral1', deviceJoinName: 'Aqara Switch'
 
         // Zigbee OnOff Swtich
-        fingerprint endpointId: "0B", profileId: "0104", deviceId: "0100", inClusters: "0000, 0003, 0004, 0005, 0006", outClusters: "0000", manufacturer: "SZ", model: "Lamp_01", deviceJoinName: "Zigbee OnOff Switch"
+        fingerprint endpointId: '0B', profileId: '0104', deviceId: '0100', inClusters: '0000, 0003, 0004, 0005, 0006', outClusters: '0000', manufacturer: 'SZ', model: 'Lamp_01', deviceJoinName: 'Zigbee OnOff Switch'
 
         // Tuya multi switch
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0100", inClusters: "0000, 0004, 0005, 0006", outClusters: "0019, 000A", manufacturer: "_TZ3000_fvh3pjaz", model: "TS0012", deviceJoinName: "Tuya Multi Switch 1"
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0100", inClusters: "0000, 0004, 0005, 0006", outClusters: "0019, 000A", manufacturer: "_TZ3000_pmz6mjyu", model: "TS011F", deviceJoinName: "Tuya Multi Switch 1"
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0100", inClusters: "0000, 000A, 0004, 0005, 0006", outClusters: "0019", manufacturer: "_TZ3000_go9rahj5", model: "TS0004", deviceJoinName: "Tuya Multi Switch 1"
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0051", inClusters: "0000, 0004, 0005, EF00", outClusters: "0019, 000A", manufacturer: "_TZE200_aqnazj70", model: "TS0601", deviceJoinName: "Tuya Multi Switch 1"
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0100', inClusters: '0000, 0004, 0005, 0006', outClusters: '0019, 000A', manufacturer: '_TZ3000_fvh3pjaz', model: 'TS0012', deviceJoinName: 'Tuya Multi Switch 1'
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0100', inClusters: '0000, 0004, 0005, 0006', outClusters: '0019, 000A', manufacturer: '_TZ3000_pmz6mjyu', model: 'TS011F', deviceJoinName: 'Tuya Multi Switch 1'
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0100', inClusters: '0000, 000A, 0004, 0005, 0006', outClusters: '0019', manufacturer: '_TZ3000_go9rahj5', model: 'TS0004', deviceJoinName: 'Tuya Multi Switch 1'
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0051', inClusters: '0000, 0004, 0005, EF00', outClusters: '0019, 000A', manufacturer: '_TZE200_aqnazj70', model: 'TS0601', deviceJoinName: 'Tuya Multi Switch 1'
         // not working
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0100", inClusters: "0000, 0004, 0005, 0006", outClusters: "0019, 000A", manufacturer: "_TZ3000_wyhuocal", model: "TS0013", deviceJoinName: "Tuya Multi Switch 1" //< - not working
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0100', inClusters: '0000, 0004, 0005, 0006', outClusters: '0019, 000A', manufacturer: '_TZ3000_wyhuocal', model: 'TS0013', deviceJoinName: 'Tuya Multi Switch 1' //< - not working
 
         // Tuya multitab with USB
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0009", inClusters: "0000, 000A, 0004, 0005, 0006", outClusters: "0019", manufacturer: "_TYZB01_vkwryfdr", model: "TS0115", deviceJoinName: "Tuya Multi Tab Switch 1"
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0051", inClusters: "0000, 0003, 0004, 0005, 0006, 0702, 0B04", outClusters: "0019", manufacturer: "_TYZB01_b1ngbmlm", model: "TS0112", deviceJoinName: "Tuya USB Socket Plug 1"
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "010A", inClusters: "0000, 0003, 0004, 0005, 0006, E000, E001", outClusters: "0019, 000A", manufacturer: "_TZ3000_o005nuxx", model: "TS011F", deviceJoinName: "Tuya Multi Tab Switch 1"
-      
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0009', inClusters: '0000, 000A, 0004, 0005, 0006', outClusters: '0019', manufacturer: '_TYZB01_vkwryfdr', model: 'TS0115', deviceJoinName: 'Tuya Multi Tab Switch 1'
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0051', inClusters: '0000, 0003, 0004, 0005, 0006, 0702, 0B04', outClusters: '0019', manufacturer: '_TYZB01_b1ngbmlm', model: 'TS0112', deviceJoinName: 'Tuya USB Socket Plug 1'
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '010A', inClusters: '0000, 0003, 0004, 0005, 0006, E000, E001', outClusters: '0019, 000A', manufacturer: '_TZ3000_o005nuxx', model: 'TS011F', deviceJoinName: 'Tuya Multi Tab Switch 1'
+
         // Terncy Switch
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0100", inClusters: "0000, 0003, 0006, 0020, FCCC", outClusters: "0019", manufacturer: "Terncy", model: "TERNCY-WS01-S3", deviceJoinName: "Terncy Switch 1"
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0100", inClusters: "0000, 0003, 0006, 0020, FCCC", outClusters: "0019", manufacturer: "Terncy", model: "TERNCY-WS01-S2", deviceJoinName: "Terncy Switch 1"
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0100', inClusters: '0000, 0003, 0006, 0020, FCCC', outClusters: '0019', manufacturer: 'Terncy', model: 'TERNCY-WS01-S3', deviceJoinName: 'Terncy Switch 1'
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0100', inClusters: '0000, 0003, 0006, 0020, FCCC', outClusters: '0019', manufacturer: 'Terncy', model: 'TERNCY-WS01-S2', deviceJoinName: 'Terncy Switch 1'
 
         // Unclear devices without model, meanufacturer
-        fingerprint endpointId: "01", profileId: "0104", deviceId: "0100", inClusters: "0006, 0000, 0003", outClusters: "0019", manufacturer: "", model: "", deviceJoinName: "ZigBee Switch 1"
+        fingerprint endpointId: '01', profileId: '0104', deviceId: '0100', inClusters: '0006, 0000, 0003', outClusters: '0019', manufacturer: '', model: '', deviceJoinName: 'ZigBee Switch 1'
     }
 
     preferences {
-        input name: "isAutoCreateChildDevice", type: "bool", title: "Auto detecting and create device", description: "default: true", defaultValue: true, required: true
-        input name: "isCreateAllControllerSwitch", type: "bool", title: "Create All switch", description: "default: false", defaultValue: false, required: true
-        input type: "paragraph", element: "paragraph", title: "Version", description: version(), displayDuringSetup: false
+        input name: 'isAutoCreateChildDevice', type: 'bool', title: 'Auto detecting and create device', description: 'default: true', defaultValue: true, required: true
+        input name: 'isCreateAllControllerSwitch', type: 'bool', title: 'Create All switch', description: 'default: false', defaultValue: false, required: true
+        input type: 'paragraph', element: 'paragraph', title: 'Version', description: version(), displayDuringSetup: false
     }
 
     // simulator metadata
     simulator {
         // status messages
-        status "on": "on/off: 1"
-        status "off": "on/off: 0"
+        status 'on': 'on/off: 1'
+        status 'off': 'on/off: 0'
 
         // reply messages
-        reply "zcl on-off on": "on/off: 1"
-        reply "zcl on-off off": "on/off: 0"
+        reply 'zcl on-off on': 'on/off: 1'
+        reply 'zcl on-off off': 'on/off: 0'
     }
 
     tiles(scale: 2) {
-        multiAttributeTile(name: "switch", type: "lighting", width: 6, height: 4, canChangeIcon: true) {
-            tileAttribute("device.switch", key: "PRIMARY_CONTROL") {
-                attributeState "on", label: '${name}', action: "switch.off", icon: "st.switches.light.on", backgroundColor: "#00A0DC", nextState: "turningOff"
-                attributeState "off", label: '${name}', action: "switch.on", icon: "st.switches.light.off", backgroundColor: "#ffffff", nextState: "turningOn"
-                attributeState "turningOn", label: '${name}', action: "switch.off", icon: "st.switches.light.on", backgroundColor: "#00A0DC", nextState: "turningOff"
-                attributeState "turningOff", label: '${name}', action: "switch.on", icon: "st.switches.light.off", backgroundColor: "#ffffff", nextState: "turningOn"
+        multiAttributeTile(name: 'switch', type: 'lighting', width: 6, height: 4, canChangeIcon: true) {
+            tileAttribute('device.switch', key: 'PRIMARY_CONTROL') {
+                attributeState 'on', label: '${name}', action: 'switch.off', icon: 'st.switches.light.on', backgroundColor: '#00A0DC', nextState: 'turningOff'
+                attributeState 'off', label: '${name}', action: 'switch.on', icon: 'st.switches.light.off', backgroundColor: '#ffffff', nextState: 'turningOn'
+                attributeState 'turningOn', label: '${name}', action: 'switch.off', icon: 'st.switches.light.on', backgroundColor: '#00A0DC', nextState: 'turningOff'
+                attributeState 'turningOff', label: '${name}', action: 'switch.on', icon: 'st.switches.light.off', backgroundColor: '#ffffff', nextState: 'turningOn'
             }
         }
-        standardTile("refresh", "device.refresh", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
-            state "default", label: "", action: "refresh.refresh", icon: "st.secondary.refresh"
+        standardTile('refresh', 'device.refresh', inactiveLabel: false, decoration: 'flat', width: 2, height: 2) {
+            state 'default', label: '', action: 'refresh.refresh', icon: 'st.secondary.refresh'
         }
-        main "switch"
-        details(["switch", "refresh"])
+        main 'switch'
+        details(['switch', 'refresh'])
     }
 }
 
 def installed() {
-    log.debug "installed()"
+    log.debug 'installed()'
     def endpointCount = getEndpointCount()
-    def model = device.getDataValue("model")
+    def model = device.getDataValue('model')
     if (endpointCount == 1) {
         // for 1 gang switch - ST Official local dth
         if (model == 'lumi.switch.b1naus01') {
-            setDeviceType("ZigBee Switch Power")
+            setDeviceType('ZigBee Switch Power')
         } else {
-            setDeviceType("ZigBee Switch")
+            setDeviceType('ZigBee Switch')
         }
-    } else if (endpointCount > 1){
+    } else if (endpointCount > 1) {
         if (model == 'FB56+ZSW1HKJ2.5' || model == 'FB56+ZSW1IKJ2.7') {
-            device.updateDataValue("endpointId", "10")
+            device.updateDataValue('endpointId', '10')
         }
         // for multi switch, cloud device
         createChildDevices()
     }
-    updateDataValue("onOff", "catchall")
+    updateDataValue('onOff', 'catchall')
     state.hasConfiguredHealthCheck = false
     refresh()
 }
 
 def updated() {
-    log.debug "updated()"
-    updateDataValue("onOff", "catchall")
+    log.debug 'updated()'
+    updateDataValue('onOff', 'catchall')
     state.hasConfiguredHealthCheck = false
     refresh()
 }
@@ -264,14 +265,14 @@ def parse(String description) {
     if (!eventMap && eventDescMap) {
         eventMap = [:]
         if (eventDescMap?.clusterId == zigbee.ONOFF_CLUSTER) {
-            eventMap[name] = "switch"
+            eventMap[name] = 'switch'
             eventMap[value] = eventDescMap?.value
         }
     }
 
     if (eventMap && eventDescMap) {
-        if (eventDescMap?.attrId == "0000" || eventDescMap?.attId == null) {
-            def endpointId = device.getDataValue("endpointId")
+        if (eventDescMap?.attrId == '0000' || eventDescMap?.attId == null) {
+            def endpointId = device.getDataValue('endpointId')
             log.debug "eventMap $eventMap | eventDescMap $eventDescMap"
             eventMap[displayed] = true
             if (eventDescMap?.sourceEndpoint == endpointId) {
@@ -284,8 +285,8 @@ def parse(String description) {
                 if (childDevice) {
                     log.debug "parse - sendEvent child  $eventDescMap.sourceEndpoint"
                     childDevice.sendEvent(eventMap)
-                } else if (isAutoCreateChildDevice != false || getEndpointCount() == 0){
-                    def model = device.getDataValue("model")
+                } else if (isAutoCreateChildDevice != false || getEndpointCount() == 0) {
+                    def model = device.getDataValue('model')
                     log.debug "Child device: $device.deviceNetworkId:${eventDescMap?.sourceEndpoint} was not found"
                     def parentEndpointInt = zigbee.convertHexToInt(endpointId)
                     if (eventDescMap?.sourceEndpoint != null) {
@@ -300,7 +301,7 @@ def parse(String description) {
 
                         if (childByEndpointId) {
                             log.debug "FOUND CHILD!!!!! Change dni to $device.deviceNetworkId:$childEndpointHexString"
-                            childByEndpointId.setDeviceNetworkId("$device.deviceNetworkId:$childEndpointHexString")               
+                            childByEndpointId.setDeviceNetworkId("$device.deviceNetworkId:$childEndpointHexString")
                         } else {
                             log.debug "NOT FOUND CHILD!!!!! Create to $deviceLabel$deviceIndex"
                             createChildDevice("$deviceLabel$deviceIndex", childEndpointHexString)
@@ -314,7 +315,7 @@ def parse(String description) {
                     }
                     if (!allControlChildDevice) {
                         def deviceLabel = "${device.displayName[0..-2]}"
-                        createChildDevice("${deviceLabel}ALL", "ALL")
+                        createChildDevice("${deviceLabel}ALL", 'ALL')
                     }
                 }
             }
@@ -325,7 +326,7 @@ def parse(String description) {
 }
 
 private checkAllSwtichValue() {
-    def parentSwitchValue = device.currentState("switch").value
+    def parentSwitchValue = device.currentState('switch').value
     log.debug("checkAllSwtichValue ${device.label} : ${parentSwitchValue}")
 
     def allChildDeviceValue = parentSwitchValue
@@ -335,23 +336,23 @@ private checkAllSwtichValue() {
         if (it.deviceNetworkId == "$device.deviceNetworkId:ALL") {
             allChildDevice = it
         } else {
-            if (it.currentState("switch")?.value == "on") {
-                allChildDeviceValue = "on"
+            if (it.currentState('switch')?.value == 'on') {
+                allChildDeviceValue = 'on'
             }
         }
     }
 
-    if (allChildDevice?.currentState("switch") != allChildDeviceValue) {
-        allChildDevice?.sendEvent(name: "switch", value : allChildDeviceValue)
+    if (allChildDevice?.currentState('switch') != allChildDeviceValue) {
+        allChildDevice?.sendEvent(name: 'switch', value : allChildDeviceValue)
     }
 }
 
 private getEndpointCount() {
-    def model = device.getDataValue("model")
+    def model = device.getDataValue('model')
     def count = MODEL_MAP[model] ?: 0
-    
-    def manufacturer = device.getDataValue("manufacturer")
-    
+
+    def manufacturer = device.getDataValue('manufacturer')
+
     if ( model == 'TS011F' && manufacturer == '_TZ3000_o005nuxx') {
         count = 4
     }
@@ -364,7 +365,7 @@ private void createChildDevices() {
     log.debug("=============createChildDevices of $device.deviceNetworkId")
     if (!state.isCreateChildDone || isAutoCreateChildDevice != false) {
         def endpointCount = getEndpointCount()
-        def endpointId = device.getDataValue("endpointId")
+        def endpointId = device.getDataValue('endpointId')
         def endpointInt = zigbee.convertHexToInt(endpointId)
         def deviceLabel = "${device.displayName[0..-2]}"
 
@@ -373,17 +374,17 @@ private void createChildDevices() {
             createChildDevice("$deviceLabel${i + 1}", endpointHexString)
         }
 
-        def model = device.getDataValue("model")
-        def manufacturer = device.getDataValue("manufacturer")
+        def model = device.getDataValue('model')
+        def manufacturer = device.getDataValue('manufacturer')
 
         if ( model == 'TS0115' ) {
-            createChildDevice("${deviceLabel}USB", "07")
+            createChildDevice("${deviceLabel}USB", '07')
         }
-        
+
         if ( model == 'TS011F' && manufacturer == '_TZ3000_o005nuxx' ) {
-            createChildDevice("${deviceLabel}USB", "05")
+            createChildDevice("${deviceLabel}USB", '05')
         }
-        
+
         state.isCreateChildDone = true
     }
 }
@@ -394,7 +395,7 @@ private void createChildDevice(String deviceLabel, String endpointHexString) {
     }
     if (!childDevice) {
         log.debug("===========Need to createChildDevice: $device.deviceNetworkId:$endpointHexString")
-        addChildDevice("smartthings", "Child Switch", "$device.deviceNetworkId:$endpointHexString", device.hubId,
+        addChildDevice('smartthings', 'Child Switch', "$device.deviceNetworkId:$endpointHexString", device.hubId,
                        [completedSetup: true, label: deviceLabel, isComponent: false])
     } else {
         log.debug("createChildDevice: SKIP - $device.deviceNetworkId:${endpointHexString}")
@@ -402,7 +403,7 @@ private void createChildDevice(String deviceLabel, String endpointHexString) {
 }
 
 private getChildEndpoint(String dni) {
-    dni.split(":")[-1] as String
+    dni.split(':')[-1] as String
 }
 
 private allChildOn() {
@@ -410,9 +411,9 @@ private allChildOn() {
 
     childDevices.each {
         if (it.deviceNetworkId == "$device.deviceNetworkId:ALL") {
-            it.sendEvent(name: "switch", value: "on") 
+            it.sendEvent(name: 'switch', value: 'on')
         } else {
-            if (it.currentState("switch").value != "on") {
+            if (it.currentState('switch').value != 'on') {
                 it.on()
             }
         }
@@ -423,9 +424,9 @@ private allChildOff() {
     log.debug "Executing 'off all' for 0x${device.deviceNetworkId}"
     childDevices.each {
         if (it.deviceNetworkId == "$device.deviceNetworkId:ALL") {
-            it.sendEvent(name: "switch", value: "off") 
+            it.sendEvent(name: 'switch', value: 'off')
         } else {
-            if (it.currentState("switch").value != "off") {
+            if (it.currentState('switch').value != 'off') {
                 it.off()
             }
         }
@@ -433,40 +434,40 @@ private allChildOff() {
 }
 
 def on() {
-    log.debug("on")
+    log.debug('on')
     zigbee.on()
 }
 
 def off() {
-    log.debug("off")
+    log.debug('off')
     zigbee.off()
 }
 
 def childOn(String dni) {
     log.debug("child on ${dni}")
     def childEndpoint = getChildEndpoint(dni)
-    if(childEndpoint == "ALL") {
+    if (childEndpoint == 'ALL') {
         allChildOn()
-        if (device.currentState("switch") != "on") {
+        if (device.currentState('switch') != 'on') {
             zigbee.on()
         }
     } else {
         def endpointInt = zigbee.convertHexToInt(childEndpoint)
-        zigbee.command(zigbee.ONOFF_CLUSTER, 0x01, "", [destEndpoint: endpointInt])
+        zigbee.command(zigbee.ONOFF_CLUSTER, 0x01, '', [destEndpoint: endpointInt])
     }
 }
 
 def childOff(String dni) {
     log.debug("child off ${dni}")
     def childEndpoint = getChildEndpoint(dni)
-    if(childEndpoint == "ALL") {
+    if (childEndpoint == 'ALL') {
         allChildOff()
-        if (device.currentState("switch") != "off") {
+        if (device.currentState('switch') != 'off') {
             zigbee.off()
         }
     }else {
         def endpointInt = zigbee.convertHexToInt(childEndpoint)
-        zigbee.command(zigbee.ONOFF_CLUSTER, 0x00, "", [destEndpoint: endpointInt])
+        zigbee.command(zigbee.ONOFF_CLUSTER, 0x00, '', [destEndpoint: endpointInt])
     }
 }
 
@@ -503,7 +504,7 @@ def poll() {
 }
 
 def healthPoll() {
-    log.debug "healthPoll()"
+    log.debug 'healthPoll()'
     def cmds = refresh()
     cmds.each { sendHubCommand(new physicalgraph.device.HubAction(it)) }
 }
@@ -511,18 +512,18 @@ def healthPoll() {
 def configureHealthCheck() {
     Integer hcIntervalMinutes = 12
     if (!state.hasConfiguredHealthCheck) {
-        log.debug "Configuring Health Check, Reporting"
-        unschedule("healthPoll")
-        runEvery5Minutes("healthPoll")
-        def healthEvent = [name: "checkInterval", value: hcIntervalMinutes * 60, displayed: false, data: [protocol: "zigbee", hubHardwareId: device.hub.hardwareID]]
+        log.debug 'Configuring Health Check, Reporting'
+        unschedule('healthPoll')
+        runEvery5Minutes('healthPoll')
+        def healthEvent = [name: 'checkInterval', value: hcIntervalMinutes * 60, displayed: false, data: [protocol: 'zigbee', hubHardwareId: device.hub.hardwareID]]
         // Device-Watch allows 2 check-in misses from device
         sendEvent(healthEvent)
         childDevices.each {
             def childEndpoint = getChildEndpoint(it.deviceNetworkId)
             if (childEndpoint.isNumber()) {
                 it.sendEvent(healthEvent)
-            } else if (childEndpoint == "ALL") {
-                it.sendEvent(name: "DeviceWatch-Enroll", value: JsonOutput.toJson([protocol: "zigbee", scheme:"untracked"]), displayed: false)
+            } else if (childEndpoint == 'ALL') {
+                it.sendEvent(name: 'DeviceWatch-Enroll', value: JsonOutput.toJson([protocol: 'zigbee', scheme:'untracked']), displayed: false)
             }
         }
         state.hasConfiguredHealthCheck = true
@@ -530,7 +531,7 @@ def configureHealthCheck() {
 }
 
 def configure() {
-    log.debug "configure()"
+    log.debug 'configure()'
     configureHealthCheck()
 
     //other devices supported by this DTH in the future

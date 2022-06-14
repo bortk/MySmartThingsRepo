@@ -20,7 +20,7 @@ import physicalgraph.zigbee.zcl.DataType
 
 /* groovylint-disable-next-line CompileStatic */
 metadata {
-    definition (name: 'B Zigbee Multi Button for Opple', namespace: 'bortk', author: 'SmartThings', mcdSync: true, ocfDeviceType: 'x.com.st.d.remotecontroller') {
+    definition (name: 'B Zigbee Multi Button for Opple', namespace: 'bortk-dev', author: 'SmartThings', mcdSync: true, ocfDeviceType: 'x.com.st.d.remotecontroller') {
         capability 'Actuator'
         capability 'Button'
         capability 'Holdable Button'
