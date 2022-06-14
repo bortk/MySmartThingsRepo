@@ -13,7 +13,7 @@
  */
 
 metadata {
-	definition (name: "B ZigBee Switch Power", namespace: "bortk", author: "SmartThings", ocfDeviceType: "oic.d.switch", runLocally: true, minHubCoreVersion: '000.019.00012', executeCommandsLocally: true, genericHandler: "Zigbee") {
+	definition (name: "B ZigBee Switch Power", namespace: "bortk-dev", author: "SmartThings", ocfDeviceType: "oic.d.switch", runLocally: true, minHubCoreVersion: '000.019.00012', executeCommandsLocally: true, genericHandler: "Zigbee") {
 		capability "Actuator"
 		capability "Configuration"
 		capability "Refresh"

@@ -123,7 +123,7 @@ private getMODEL_MAP() {
 }
 
 metadata {
-    definition(name: "Integrated ZigBee Switch", namespace: "bortk", author: "Booung", ocfDeviceType: "oic.d.switch", vid: "generic-switch") {
+    definition(name: "Integrated ZigBee Switch", namespace: "bortk-dev", author: "Booung", ocfDeviceType: "oic.d.switch", vid: "generic-switch") {
         capability "Actuator"
         capability "Configuration"
         capability "Refresh"
