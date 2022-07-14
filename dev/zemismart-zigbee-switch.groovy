@@ -1,4 +1,8 @@
 /*
+ ** Boris
+ ** https://drive.google.com/file/d/1hXHLfKgKnyN1E20kGrcmbgDxG-cz1bDt/view 
+ ** Zemismart 3 buttons push switch
+ * 
  *  Copyright 2020 SmartThings
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not
